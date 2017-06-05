@@ -1,7 +1,14 @@
+interface GenericObject {
+    [key: string]: any;
+}
+
 export interface Action {
     type: any;
     [fieldKey: string]: any;
 }
+
+export type State = GenericObject;
+
 
 export interface ValidatorKeyMap {
     [fieldKey: string]: string[];
@@ -11,13 +18,13 @@ export interface Context {
     [key: string]: any;
 }
 
-type CheckOutput = boolean | object;
+export type CheckOutput = boolean | object;
 
 export interface CheckInput {
     fieldKey: string;
     field: any;
     action: Action;
-    state: object;
+    state: State;
 }
 
 type SyncCheck = (input: CheckInput) => CheckOutput;
@@ -26,7 +33,7 @@ type AsyncCheck = (input: CheckInput) => Promise<CheckOutput>;
 
 type Check = SyncCheck | AsyncCheck;
 
-interface ProduceErrorInput extends CheckInput {
+export interface ProduceErrorInput extends CheckInput {
     context: Context;
 }
 
@@ -83,7 +90,7 @@ export interface MiddlewareConfig {
 
 export interface ProcessInput {
     action: Action;
-    state: object;
+    state: State;
     mode: number;
     validatorMap: NormalizedValidatorMap;
     validatorKeyMap: ValidatorKeyMap;

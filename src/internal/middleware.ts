@@ -48,7 +48,7 @@ export default function configureReduxTSA({
         return onError(type, fieldErrors, processErrors);
     }
 
-    return (store: Redux.MiddlewareAPI<object>) => (next: Redux.Dispatch<object>) => async (action: types.Action) => {
+    return (store: Redux.MiddlewareAPI<types.State>) => (next: Redux.Dispatch<types.State>) => async (action: types.Action) => {
         if (action[validatorKeyMapSymbol]) {
             const result = await process({
                 action,

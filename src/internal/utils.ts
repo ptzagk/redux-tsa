@@ -11,6 +11,7 @@ export function validate(
     validatorKeyMap: types.ValidatorKeyMap,
     mode: number = Infinity,
 ): types.Action {
+
     return {
         ...action,
         [validatorKeyMapSymbol]: validatorKeyMap,
