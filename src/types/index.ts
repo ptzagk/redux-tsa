@@ -37,7 +37,7 @@ export interface ProduceErrorInput extends CheckInput {
     context: Context;
 }
 
-type ProduceError = (input: ProduceErrorInput) => Error;
+type ProduceError = (input: ProduceErrorInput) => TSAError;
 
 export interface Validator {
     check: Check;
@@ -46,7 +46,7 @@ export interface Validator {
 
 type LoadedAsyncCheck = () => Promise<CheckOutput>;
 
-type LoadedProduceError = (context: Context) => Error;
+type LoadedProduceError = (context: Context) => TSAError;
 
 export interface LoadedNormalizedValidator {
     check: LoadedAsyncCheck;
@@ -96,18 +96,18 @@ export interface ProcessInput {
     validatorKeyMap: ValidatorKeyMap;
 }
 
-export interface ProcessErrorOutput {
+export interface ErrorMaps {
     fieldErrors: ErrorMap;
     processErrors: ErrorMap;
 }
 
-export type ProcessOutput = ProcessErrorOutput | boolean;
+export type ProcessOutput = ErrorMaps | boolean;
 
-export interface ValidationResult {
-    checkOutput: Promise<CheckOutput>;
-    error: LoadedProduceError;
+export type ValidationResult = TSAError | boolean;
+
+export interface FieldValidationResult {
+    results: ValidationResult[];
+    fieldKey: string;
 }
 
-export interface ValidationResultMap {
-    [fieldKey: string]: ValidationResult[];
-}
+export type ActionValidationResult = FieldValidationResult[];

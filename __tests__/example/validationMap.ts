@@ -26,7 +26,7 @@ const isReasonable = {
             }, 1000);
         });
     },
-    error({ fieldKey, field }: types.ProduceErrorInput): string {
+    error({ fieldKey, field }: types.ProduceErrorInput): types.TSAError {
         return `${field} is more than 100, and that's not a reasonable ${fieldKey}`
     }
 };
@@ -35,7 +35,7 @@ const isPoetic = {
     async check({ field }: types.CheckInput): Promise<types.CheckOutput> {
         return detectPoetry(field);
     },
-    error ({ context }: types.ProduceErrorInput): string {
+    error ({ context }: types.ProduceErrorInput): types.TSAError {
         return `try again after some ${context.juice}`;
     }
 }
@@ -48,7 +48,7 @@ const isAvailable = {
             return true;
         }
     },
-    error({ field, fieldKey }: types.ProduceErrorInput): string {
+    error({ field, fieldKey }: types.ProduceErrorInput): types.TSAError {
         return `the ${fieldKey}: ${field} is taken`;
     }
 }

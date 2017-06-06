@@ -25,6 +25,9 @@
     "redux": "^3.6.0"
   },
   "jest": {
+      "testPathIgnorePatterns": [
+          "example"
+      ],
       "moduleFileExtensions": [
           "ts",
           "tsx",

@@ -18,3 +18,23 @@ export function validate(
         [modeSymbol]: mode,
     };
 }
+
+export function normalizeValidatorMap(validatorMap: types.ValidatorMap): types.NormalizedValidatorMap {
+        function normalizer(
+            incompleteNormalizedValidatorMap: types.NormalizedValidatorMap,
+            validatorKey: string,
+        ): types.NormalizedValidatorMap {
+            const validator = validatorMap[validatorKey];
+            return {
+                ...incompleteNormalizedValidatorMap,
+                [validatorKey]: {
+                    check(input: types.CheckInput) {
+                        return Promise.resolve(validator.check(input));
+                    },
+                    error: validator.error,
+                },
+            };
+        }
+
+        return Object.keys(validatorMap).reduce(normalizer, {});
+    }
