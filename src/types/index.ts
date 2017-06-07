@@ -39,31 +39,45 @@ export interface ProduceErrorInput extends CheckInput {
 
 type ProduceError = (input: ProduceErrorInput) => TSAError;
 
-export interface Validator {
-    check: Check;
+export interface SyncValidator {
+    check: SyncCheck;
     error: ProduceError;
 }
+
+export interface AsyncValidator {
+    check: AsyncCheck;
+    error: ProduceError;
+}
+
+interface SyncValidatorMap {
+    [key: string]: SyncValidator;
+}
+
+interface AsyncValidatorMap {
+    [key: string]: AsyncValidator;
+}
+
+export type Validator = SyncValidator | AsyncValidator;
+
+export interface ValidatorMap {
+    sync: SyncValidatorMap;
+    async: AsyncValidatorMap;
+}
+
+type LoadedSyncCheck = () => CheckOutput;
 
 type LoadedAsyncCheck = () => Promise<CheckOutput>;
 
 type LoadedProduceError = (context: Context) => TSAError;
 
-export interface LoadedNormalizedValidator {
-    check: LoadedAsyncCheck;
+export interface LoadedSyncValidator {
+    check: LoadedSyncCheck;
     error: LoadedProduceError;
 }
 
-export interface NormalizedValidator {
-    check: AsyncCheck;
-    error: ProduceError;
-}
-
-export interface ValidatorMap {
-    [key: string]: Validator;
-}
-
-export interface NormalizedValidatorMap {
-    [key: string]: NormalizedValidator;
+export interface LoadedAsyncValidator {
+    check: LoadedAsyncCheck;
+    error: LoadedProduceError;
 }
 
 interface ErrorLike {
@@ -92,7 +106,7 @@ export interface ProcessInput {
     action: Action;
     state: State;
     mode: number;
-    validatorMap: NormalizedValidatorMap;
+    validatorMap: ValidatorMap;
     validatorKeyMap: ValidatorKeyMap;
 }
 
@@ -111,3 +125,28 @@ export interface FieldValidationResult {
 }
 
 export type ActionValidationResult = FieldValidationResult[];
+
+
+//
+// export interface Validator {
+//     check: Check;
+//     error: ProduceError;
+// }
+
+export interface LoadedNormalizedValidator {
+    check: LoadedAsyncCheck;
+    error: LoadedProduceError;
+}
+//
+// export interface NormalizedValidator {
+//     check: AsyncCheck;
+//     error: ProduceError;
+// }
+//
+// export interface ValidatorMap {
+//     [key: string]: Validator;
+// }
+//
+// export interface NormalizedValidatorMap {
+//     [key: string]: NormalizedValidator;
+// }

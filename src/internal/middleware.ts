@@ -1,8 +1,9 @@
 import * as Redux from "redux";
 
-import process from "./process";
-import { modeSymbol, validatorKeyMapSymbol } from "./symbols";
-import { generateErrorType, normalizeValidatorMap } from "./utils";
+import syncProcess from "./syncProcess";
+import asyncProcess from "./asyncProcess";
+import { asyncSymbol, modeSymbol, validatorKeyMapSymbol } from "./symbols";
+import { generateErrorType } from "./utils";
 
 import * as types from "types";
 
@@ -19,8 +20,6 @@ export default function configureReduxTSA({
     onError = defaultOnError,
 }: types.MiddlewareConfig): Redux.Middleware {
 
-    const normalizedValidatorMap = normalizeValidatorMap(validatorMap);
-
     function generateErrorAction(
         actionType: string,
         fieldErrors: types.ErrorMap,
@@ -30,38 +29,48 @@ export default function configureReduxTSA({
         return onError(type, fieldErrors, processErrors);
     }
 
+
     return (store: Redux.MiddlewareAPI<types.State>) => (next: Redux.Dispatch<types.State>) => async (action: types.Action) => {
+
+        function handleOutput(result: types.ProcessOutput): void {
+            if (result === true) {
+                next(action);
+            } else {
+                let fieldErrors, processErrors, errorAction;
+                if (result === false) {
+                    fieldErrors = processErrors = null;
+                    errorAction = generateErrorAction(
+                        action.type,
+                        fieldErrors,
+                        processErrors,
+                    );
+                } else {
+                    ({ fieldErrors, processErrors } = result);
+                    errorAction = generateErrorAction(
+                        action.type,
+                        fieldErrors,
+                        processErrors,
+                    );
+                }
+                store.dispatch(errorAction);
+            }
+        }
+
+
         if (action[validatorKeyMapSymbol]) {
-            process({
+            const processInput: types.ProcessInput = {
                 action,
+                validatorMap,
                 mode: action[modeSymbol],
                 state: store.getState(),
                 validatorKeyMap: action[validatorKeyMapSymbol],
-                validatorMap: normalizedValidatorMap,
-            })
-            .then((result) => {
-                if (result === true) {
-                    next(action);
-                } else {
-                    let fieldErrors, processErrors, errorAction;
-                    if (result === false) {
-                        fieldErrors = processErrors = null;
-                        errorAction = generateErrorAction(
-                            action.type,
-                            fieldErrors,
-                            processErrors,
-                        );
-                    } else {
-                        ({ fieldErrors, processErrors } = result);
-                        errorAction = generateErrorAction(
-                            action.type,
-                            fieldErrors,
-                            processErrors,
-                        );
-                    }
-                    store.dispatch(errorAction);
-                }
-            });
+            };
+
+            if (action[asyncSymbol]) {
+                asyncProcess(processInput).then(handleOutput);
+            } else {
+                handleOutput(syncProcess(processInput));
+            }
         } else {
             next(action);
         }
