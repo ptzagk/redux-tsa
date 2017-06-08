@@ -1,5 +1,7 @@
 import { processErrorSymbol } from "./symbols";
-import { errorCount, getCheckInput, getValidator, updateErrorMaps} from "./utils";
+import { flatten } from "./utils/general";
+import { getCheckInput, getValidator, updateErrorMaps} from "./utils/process";
+import skurt from "./utils/skurt";
 
 import * as types from "types";
 
@@ -11,9 +13,28 @@ export default function asyncProcess({
     mode,
 }: types.ProcessInput): Promise<types.ProcessOutput> {
 
-    function validate(): Promise<types.ActionValidationResult> {
+    function failure(result: types.ValidationResult): types.Failure | false{
+        return (result !== true) ? result : false;
+    }
+
+    function binaryProcess(): Promise<types.ProcessOutput> {
+        const results = [];
+        for (const fieldKey of Object.keys(validatorKeyMap)) {
+            const checkInput = getCheckInput({ action, state, fieldKey});
+            for (const validatorKey of validatorKeyMap[fieldKey]) {
+                const { check } = getValidator(validatorMap, validatorKey);
+                results.push(Promise.resolve(check(checkInput)));
+            }
+        }
+
+        return skurt(failure)(1)(results).then((failures => !failures.length));
+    }
+
+    function normalProcess(): Promise<types.ProcessOutput> {
+
         function getResult(
             { check, error }: types.Validator,
+            fieldKey: string,
             checkInput: types.CheckInput,
         ): Promise<types.ValidationResult> {
             return new Promise((resolve) => {
@@ -30,72 +51,58 @@ export default function asyncProcess({
             .catch((externalError) => {
                 externalError[processErrorSymbol] = true;
                 return externalError;
+            })
+            .then((error) => {
+                return {
+                    fieldKey,
+                    error
+                };
             });
         }
 
-        const actionResults: Promise<types.FieldValidationResult>[] = [];
-        for (const fieldKey of Object.keys(validatorKeyMap)) {
-            const checkInput = getCheckInput({ action, state, fieldKey});
-            const fieldResults = [];
-            for (const validatorKey of validatorKeyMap[fieldKey]) {
-                const validator = getValidator(validatorMap, validatorKey);
-                fieldResults.push(getResult(validator, checkInput));
+        function getFieldFailures(): Promise<types.Failure[]>[] {
+            const findFailures = skurt(failure)(mode);
+            const fieldResults: Promise<types.Failure[]>[] = [];
+
+            for (const fieldKey of Object.keys(validatorKeyMap)) {
+                const fieldResult: Promise<types.ValidationResult>[] = [];
+                const checkInput = getCheckInput({ action, state, fieldKey});
+                for (const validatorKey of validatorKeyMap[fieldKey]) {
+                    const validator = getValidator(validatorMap, validatorKey);
+                    const result = getResult(validator, fieldKey, checkInput);
+                    fieldResult.push(result);
+                }
+                fieldResults.push(findFailures(fieldResult))
             }
-            actionResults.push(
-                Promise.all(fieldResults)
-                    .then((results) => {
-                        return { fieldKey, results };
-                    })
-            );
+
+            return fieldResults;
         }
-        return Promise.all(actionResults);
-    }
-
-    function output(actionResult: Promise<types.ActionValidationResult>): Promise<types.ProcessOutput> {
-
-        function fieldSuccess({ results }: types.FieldValidationResult): boolean {
-            return results.every((result) => result === true);
-        }
-
-        function buildErrorMaps(failures: types.ActionValidationResult): types.ErrorMaps {
+        function buildErrorMaps(failures: types.Failure[]): types.ErrorMaps {
             const fieldErrors: types.ErrorMap = {};
             const processErrors: types.ErrorMap = {};
 
-            for (const { results, fieldKey } of failures) {
-                for (const error of results) {
-                    if (errorCount({ fieldKey, fieldErrors, processErrors }) < mode) {
-                        updateErrorMaps({
-                            fieldKey,
-                            error: error as types.TSAError,
-                            fieldErrors,
-                            processErrors,
-                        });;
-                    } else {
-                        break;
-                    }
-                }
+            for (const { fieldKey, error } of failures) {
+                updateErrorMaps({
+                    fieldKey,
+                    error,
+                    fieldErrors,
+                    processErrors,
+                });
             }
 
             return { fieldErrors, processErrors };
         }
 
-        if (mode === 0) {
-            return actionResult
-                .then((fieldResults) => {
-                    return fieldResults.every(fieldSuccess);
-                });
-        } else {
-            return actionResult
-                .then((fieldResults) => {
-                    const failures = fieldResults.filter(fieldSuccess);
-                    if (failures.length) {
-                        return buildErrorMaps(failures)
-                    } else {
-                        return true;
-                    }
-                });
-        }
+        return Promise.all(getFieldFailures())
+            .then(flatten)
+            .then(failures => {
+                if (failures.length) {
+                    return buildErrorMaps(failures);
+                } else {
+                    return true;
+                }
+            });
     }
 
-    return output(validate());
+    return mode === 0 ? binaryProcess() : normalProcess();
 }

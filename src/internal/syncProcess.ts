@@ -1,5 +1,5 @@
 import { processErrorSymbol } from "./symbols";
-import { errorCount, isEmpty, updateErrorMaps} from "./utils";
+import { errorCount, getCheckInput, isEmpty, updateErrorMaps} from "./utils/process";
 
 import * as types from "types";
 
@@ -11,15 +11,6 @@ export default function process({
     validatorKeyMap,
     mode,
 }: types.ProcessInput): types.ProcessOutput {
-
-    function getCheckInput(fieldKey: string): types.CheckInput {
-        return {
-            action,
-            state,
-            fieldKey,
-            field: action[fieldKey],
-        };
-    }
 
     function binaryProcess(): types.ProcessOutput {
         for (const fieldKey of Object.keys(validatorKeyMap)) {
@@ -39,7 +30,7 @@ export default function process({
         let processErrors: types.ErrorMap = {};
 
         for (const fieldKey of Object.keys(validatorKeyMap)) {
-            const checkInput = getCheckInput(fieldKey);
+            const checkInput = getCheckInput({ action, state, fieldKey });
             for (const validatorKey of validatorKeyMap[fieldKey]) {
                 if (errorCount({ fieldKey, fieldErrors, processErrors }) === mode) {
                     break;

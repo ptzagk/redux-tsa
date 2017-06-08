@@ -3,7 +3,7 @@ import * as Redux from "redux";
 import syncProcess from "./syncProcess";
 import asyncProcess from "./asyncProcess";
 import { asyncSymbol, modeSymbol, validatorKeyMapSymbol } from "./symbols";
-import { generateErrorType } from "./utils";
+import { generateErrorType } from "./utils/public";
 
 import * as types from "types";
 
@@ -30,7 +30,7 @@ export default function configureReduxTSA({
     }
 
 
-    return (store: Redux.MiddlewareAPI<types.State>) => (next: Redux.Dispatch<types.State>) => async (action: types.Action) => {
+    return <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) => (action: types.Action) => {
 
         function handleOutput(result: types.ProcessOutput): void {
             if (result === true) {

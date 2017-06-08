@@ -49,11 +49,11 @@ export interface AsyncValidator {
     error: ProduceError;
 }
 
-interface SyncValidatorMap {
+export interface SyncValidatorMap {
     [key: string]: SyncValidator;
 }
 
-interface AsyncValidatorMap {
+export interface AsyncValidatorMap {
     [key: string]: AsyncValidator;
 }
 
@@ -95,6 +95,11 @@ export interface ErrorMap {
     [fieldKey: string]: TSAError[];
 }
 
+export interface Failure {
+    fieldKey: string;
+    error: TSAError;
+}
+
 export type OnError = (type: string, fieldErrors: ErrorMap, processErrors: ErrorMap) => Action;
 
 export interface MiddlewareConfig {
@@ -117,12 +122,14 @@ export interface ErrorMaps {
 
 export type ProcessOutput = ErrorMaps | boolean;
 
-export type ValidationResult = TSAError | boolean;
+export type ValidationResult = Failure | boolean;
 
-export interface FieldValidationResult {
-    results: ValidationResult[];
-    fieldKey: string;
-}
+// export interface FieldValidationResult {
+//     results: ValidationResult[];
+//     fieldKey: string;
+// }
+
+export type FieldValidationResult = ValidationResult[];
 
 export type ActionValidationResult = FieldValidationResult[];
 
