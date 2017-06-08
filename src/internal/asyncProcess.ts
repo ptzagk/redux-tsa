@@ -1,6 +1,6 @@
 import { processErrorSymbol } from "./symbols";
 import { flatten } from "./utils/general";
-import { getCheckInput, getValidator, updateErrorMaps} from "./utils/process";
+import { getCheckInput, getValidator, buildErrorMaps} from "./utils/process";
 import skurt from "./utils/skurt";
 
 import * as types from "types";
@@ -77,22 +77,7 @@ export default function asyncProcess<S>({
 
             return fieldResults;
         }
-        function buildErrorMaps(failures: types.Failure[]): types.ErrorMaps {
-            const fieldErrors: types.ErrorMap = {};
-            const processErrors: types.ErrorMap = {};
-
-            for (const { fieldKey, error } of failures) {
-                updateErrorMaps({
-                    fieldKey,
-                    error,
-                    fieldErrors,
-                    processErrors,
-                });
-            }
-
-            return { fieldErrors, processErrors };
-        }
-
+        
         return Promise.all(getFieldFailures())
             .then(flatten)
             .then(failures => {

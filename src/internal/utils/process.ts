@@ -2,39 +2,13 @@ import { processErrorSymbol } from "../symbols";
 
 import * as types from "types";
 
-interface ErrorCountInput extends types.ErrorMaps {
-    fieldKey: string;
-}
-
-export function errorCount({
-    fieldKey,
-    fieldErrors,
-    processErrors
-}: ErrorCountInput): number {
-    let fieldErrorCount, processErrorCount;
-
-    if (fieldErrors[fieldKey]) {
-        fieldErrorCount = fieldErrors[fieldKey].length;
-    } else {
-        fieldErrorCount = 0;
-    }
-
-    if (processErrors[fieldKey]) {
-        processErrorCount = processErrors[fieldKey].length;
-    } else {
-        processErrorCount = 0;
-    }
-
-    return fieldErrorCount + processErrorCount;
-}
-
 interface GetCheckInputInput<S> {
     action: types.Action;
     state: S;
     fieldKey: string;
 }
 
-export function getCheckInput<S>({ action, state, fieldKey }: GetCheckInputInput<S>): types.CheckInput {
+export function getCheckInput<S>({ action, state, fieldKey }: GetCheckInputInput<S>): types.CheckInput<S> {
     return {
         action,
         state,
@@ -62,7 +36,7 @@ interface UpdateErrorMapsInput extends types.ErrorMaps {
     error: types.TSAError
 };
 
-export function updateErrorMaps({
+function updateErrorMaps({
     fieldKey,
     error,
     fieldErrors,
@@ -85,6 +59,18 @@ export function updateErrorMaps({
     return { fieldErrors, processErrors };
 }
 
-export function isEmpty(errorMap: types.ErrorMap): boolean {
-    return Boolean(Object.keys(errorMap).length);
+export function buildErrorMaps(failures: types.Failure[]): types.ErrorMaps {
+    const fieldErrors: types.ErrorMap = {};
+    const processErrors: types.ErrorMap = {};
+
+    for (const { fieldKey, error } of failures) {
+        updateErrorMaps({
+            fieldKey,
+            error,
+            fieldErrors,
+            processErrors,
+        });
+    }
+
+    return { fieldErrors, processErrors };
 }

@@ -1,22 +1,21 @@
 import { processErrorSymbol } from "./symbols";
-import { errorCount, getCheckInput, isEmpty, updateErrorMaps} from "./utils/process";
+import { getValidator, getCheckInput,  buildErrorMaps } from "./utils/process";
 
 import * as types from "types";
 
-
-export default function process({
+export default function process<S>({
     state,
     action,
     validatorMap,
     validatorKeyMap,
     mode,
-}: types.ProcessInput): types.ProcessOutput {
+}: types.ProcessInput<S>): types.ProcessOutput {
 
     function binaryProcess(): types.ProcessOutput {
         for (const fieldKey of Object.keys(validatorKeyMap)) {
-            const checkInput = getCheckInput(fieldKey);
+            const checkInput = getCheckInput({action, state, fieldKey });
             for (const validatorKey of validatorKeyMap[fieldKey]) {
-                const { check } = validatorMap.sync[validatorKey];
+                const { check } = getValidator(validatorMap,validatorKey);
                 if (!check(checkInput)) {
                     return false;
                 }
@@ -26,52 +25,42 @@ export default function process({
     }
 
     function normalProcess(): types.ProcessOutput {
-        let fieldErrors: types.ErrorMap = {};
-        let processErrors: types.ErrorMap = {};
+        function getFailures(): types.Failure[] {
+            const failures: types.Failure[] = [];
 
-        for (const fieldKey of Object.keys(validatorKeyMap)) {
-            const checkInput = getCheckInput({ action, state, fieldKey });
-            for (const validatorKey of validatorKeyMap[fieldKey]) {
-                if (errorCount({ fieldKey, fieldErrors, processErrors }) === mode) {
-                    break;
-                }
-                const { check, error: getError } = validatorMap.sync[validatorKey];
-                let checkOutout, producedError;
-                try {
-                    checkOutout = check(checkInput)
-                } catch(e) {
-                    e[processErrorSymbol] = true;
-                    producedError = e;
-                }
-                if (!producedError && (checkOutout !== true)) {
-                    let context;
-                    if (checkOutout === false) {
-                        context = {};
+            for (const fieldKey of Object.keys(validatorKeyMap)) {
+                let fieldErrors = 0;
+                const checkInput = getCheckInput({ action, state, fieldKey });
+                for (const validatorKey of validatorKeyMap[fieldKey]) {
+                    if (fieldErrors <  mode) {
+                        const { check, error } = getValidator(validatorMap, validatorKey);
+                        let checkOutout, producedError;
+                        try {
+                            checkOutout = check(checkInput)
+                        } catch(e) {
+                            e[processErrorSymbol] = true;
+                            producedError = e;
+                        }
+                        if (!producedError && (checkOutout !== true)) {
+                            let context;
+                            if (checkOutout === false) {
+                                context = {};
+                            } else {
+                                context = checkOutout;
+                            }
+                            producedError = error({ ...checkInput, context });
+                        }
+                        failures.push({ fieldKey, error: producedError });
                     } else {
-                        context = checkOutout;
+                        break;
                     }
-                    producedError = getError({ ...checkInput, context });
-                }
-
-                if (producedError) {
-                    ({ fieldErrors, processErrors } = updateErrorMaps({
-                        fieldKey,
-                        fieldErrors,
-                        processErrors,
-                        error: producedError,
-                    }));
                 }
             }
+            return failures;
         }
 
-        const success = isEmpty(fieldErrors) && isEmpty(processErrors)
-
-        return success ? true : { fieldErrors, processErrors };
+        return ((failures) => failures.length ? buildErrorMaps(failures) : true)(getFailures());
     }
 
-    if (mode === 0) {
-        return binaryProcess();
-    } else {
-        return normalProcess();
-    }
+    return (mode === 0) ? binaryProcess() : normalProcess();
 }
