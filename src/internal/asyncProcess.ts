@@ -5,13 +5,13 @@ import skurt from "./utils/skurt";
 
 import * as types from "types";
 
-export default function asyncProcess({
+export default function asyncProcess<S>({
     state,
     action,
     validatorMap,
     validatorKeyMap,
     mode,
-}: types.ProcessInput): Promise<types.ProcessOutput> {
+}: types.ProcessInput<S>): Promise<types.ProcessOutput> {
 
     function failure(result: types.ValidationResult): types.Failure | false{
         return (result !== true) ? result : false;
@@ -33,9 +33,9 @@ export default function asyncProcess({
     function normalProcess(): Promise<types.ProcessOutput> {
 
         function getResult(
-            { check, error }: types.Validator,
+            { check, error }: types.Validator<S>,
             fieldKey: string,
-            checkInput: types.CheckInput,
+            checkInput: types.CheckInput<S>,
         ): Promise<types.ValidationResult> {
             return new Promise((resolve) => {
                 resolve(check(checkInput));

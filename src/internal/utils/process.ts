@@ -28,13 +28,13 @@ export function errorCount({
     return fieldErrorCount + processErrorCount;
 }
 
-interface GetCheckInputInput {
+interface GetCheckInputInput<S> {
     action: types.Action;
-    state: types.State;
+    state: S;
     fieldKey: string;
 }
 
-export function getCheckInput({ action, state, fieldKey }: GetCheckInputInput): types.CheckInput {
+export function getCheckInput<S>({ action, state, fieldKey }: GetCheckInputInput<S>): types.CheckInput {
     return {
         action,
         state,
@@ -43,7 +43,7 @@ export function getCheckInput({ action, state, fieldKey }: GetCheckInputInput): 
     };
 }
 
-export function getValidator(validatorMap: types.ValidatorMap, validatorKey: string): types.Validator {
+export function getValidator<S>(validatorMap: types.ValidatorMap<S>, validatorKey: string): types.Validator<S> {
     let validator;
     validator = validatorMap.sync[validatorKey];
     if (validator) {

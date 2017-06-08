@@ -15,10 +15,10 @@ function defaultOnError(
     return { type, fieldErrors, processErrors };
 }
 
-export default function configureReduxTSA({
+export default function configureReduxTSA<S>({
     validatorMap,
     onError = defaultOnError,
-}: types.MiddlewareConfig): Redux.Middleware {
+}: types.MiddlewareConfig<S>): Redux.Middleware {
 
     function generateErrorAction(
         actionType: string,
@@ -30,7 +30,7 @@ export default function configureReduxTSA({
     }
 
 
-    return <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) => (action: types.Action) => {
+    return (store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) => (action: types.Action) => {
 
         function handleOutput(result: types.ProcessOutput): void {
             if (result === true) {
@@ -58,12 +58,12 @@ export default function configureReduxTSA({
 
 
         if (action[validatorKeyMapSymbol]) {
-            const processInput: types.ProcessInput = {
+            const processInput: types.ProcessInput<S> = {
                 action,
                 validatorMap,
-                mode: action[modeSymbol],
+                mode: action[modeSymbol] as number,
                 state: store.getState(),
-                validatorKeyMap: action[validatorKeyMapSymbol],
+                validatorKeyMap: (action[validatorKeyMapSymbol]) as types.ValidatorKeyMap,
             };
 
             if (action[asyncSymbol]) {

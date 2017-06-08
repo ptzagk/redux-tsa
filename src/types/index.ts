@@ -1,14 +1,7 @@
-interface GenericObject {
-    [key: string]: any;
-}
-
 export interface Action {
     type: any;
     [fieldKey: string]: any;
 }
-
-export type State = GenericObject;
-
 
 export interface ValidatorKeyMap {
     [fieldKey: string]: string[];
@@ -20,48 +13,48 @@ export interface Context {
 
 export type CheckOutput = boolean | object;
 
-export interface CheckInput {
+export interface CheckInput<S> {
     fieldKey: string;
     field: any;
     action: Action;
-    state: State;
+    state: S;
 }
 
-type SyncCheck = (input: CheckInput) => CheckOutput;
+type SyncCheck<S> = (input: CheckInput<S>) => CheckOutput;
 
-type AsyncCheck = (input: CheckInput) => Promise<CheckOutput>;
+type AsyncCheck<S> = (input: CheckInput<S>) => Promise<CheckOutput>;
 
-type Check = SyncCheck | AsyncCheck;
+type Check<S> = SyncCheck<S> | AsyncCheck<S>;
 
-export interface ProduceErrorInput extends CheckInput {
+export interface ProduceErrorInput<S> extends CheckInput<S> {
     context: Context;
 }
 
-type ProduceError = (input: ProduceErrorInput) => TSAError;
+type ProduceError<S> = (input: ProduceErrorInput<S>) => TSAError;
 
-export interface SyncValidator {
-    check: SyncCheck;
-    error: ProduceError;
+export interface SyncValidator<S> {
+    check: SyncCheck<S>;
+    error: ProduceError<S>;
 }
 
-export interface AsyncValidator {
-    check: AsyncCheck;
-    error: ProduceError;
+export interface AsyncValidator<S> {
+    check: AsyncCheck<S>;
+    error: ProduceError<S>;
 }
 
-export interface SyncValidatorMap {
-    [key: string]: SyncValidator;
+export interface SyncValidatorMap<S> {
+    [key: string]: SyncValidator<S>;
 }
 
-export interface AsyncValidatorMap {
-    [key: string]: AsyncValidator;
+export interface AsyncValidatorMap<S> {
+    [key: string]: AsyncValidator<S>;
 }
 
-export type Validator = SyncValidator | AsyncValidator;
+export type Validator<S> = SyncValidator<S> | AsyncValidator<S>;
 
-export interface ValidatorMap {
-    sync: SyncValidatorMap;
-    async: AsyncValidatorMap;
+export interface ValidatorMap<S> {
+    sync: SyncValidatorMap<S>;
+    async: AsyncValidatorMap<S>;
 }
 
 type LoadedSyncCheck = () => CheckOutput;
@@ -102,16 +95,16 @@ export interface Failure {
 
 export type OnError = (type: string, fieldErrors: ErrorMap, processErrors: ErrorMap) => Action;
 
-export interface MiddlewareConfig {
-    validatorMap: ValidatorMap;
+export interface MiddlewareConfig<S> {
+    validatorMap: ValidatorMap<S>;
     onError: OnError;
 }
 
-export interface ProcessInput {
+export interface ProcessInput<S> {
     action: Action;
-    state: State;
+    state: S;
     mode: number;
-    validatorMap: ValidatorMap;
+    validatorMap: ValidatorMap<S>;
     validatorKeyMap: ValidatorKeyMap;
 }
 
@@ -124,36 +117,4 @@ export type ProcessOutput = ErrorMaps | boolean;
 
 export type ValidationResult = Failure | boolean;
 
-// export interface FieldValidationResult {
-//     results: ValidationResult[];
-//     fieldKey: string;
-// }
-
 export type FieldValidationResult = ValidationResult[];
-
-export type ActionValidationResult = FieldValidationResult[];
-
-
-//
-// export interface Validator {
-//     check: Check;
-//     error: ProduceError;
-// }
-
-export interface LoadedNormalizedValidator {
-    check: LoadedAsyncCheck;
-    error: LoadedProduceError;
-}
-//
-// export interface NormalizedValidator {
-//     check: AsyncCheck;
-//     error: ProduceError;
-// }
-//
-// export interface ValidatorMap {
-//     [key: string]: Validator;
-// }
-//
-// export interface NormalizedValidatorMap {
-//     [key: string]: NormalizedValidator;
-// }
