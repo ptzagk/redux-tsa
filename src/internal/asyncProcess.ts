@@ -22,7 +22,7 @@ export default function asyncProcess<S>({
         for (const fieldKey of Object.keys(validatorKeyMap)) {
             const checkInput = getCheckInput({ action, state, fieldKey});
             for (const validatorKey of validatorKeyMap[fieldKey]) {
-                const { check } = getValidator(validatorMap, validatorKey);
+                const { check } = getValidator(validatorMap, validatorKey, true);
                 results.push(Promise.resolve(check(checkInput)));
             }
         }
@@ -68,7 +68,7 @@ export default function asyncProcess<S>({
                 const fieldResult: Promise<types.ValidationResult>[] = [];
                 const checkInput = getCheckInput({ action, state, fieldKey});
                 for (const validatorKey of validatorKeyMap[fieldKey]) {
-                    const validator = getValidator(validatorMap, validatorKey);
+                    const validator = getValidator(validatorMap, validatorKey, true);
                     const result = getResult(validator, fieldKey, checkInput);
                     fieldResult.push(result);
                 }
@@ -77,7 +77,7 @@ export default function asyncProcess<S>({
 
             return fieldResults;
         }
-        
+
         return Promise.all(getFieldFailures())
             .then(flatten)
             .then(failures => {

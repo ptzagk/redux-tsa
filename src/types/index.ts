@@ -115,6 +115,8 @@ export interface ErrorMaps {
 
 export type ProcessOutput = ErrorMaps | boolean;
 
-export type ValidationResult = Failure | boolean;
+export type ValidationResult = Failure | true;
 
 export type FieldValidationResult = ValidationResult[];
+
+// configureReduxTSA is a higer-order function that produces a configured Redux TSA middleware.

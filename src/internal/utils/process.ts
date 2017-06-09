@@ -17,17 +17,18 @@ export function getCheckInput<S>({ action, state, fieldKey }: GetCheckInputInput
     };
 }
 
-export function getValidator<S>(validatorMap: types.ValidatorMap<S>, validatorKey: string): types.Validator<S> {
+export function getValidator<S>(validatorMap: types.ValidatorMap<S>, validatorKey: string, async: boolean): types.Validator<S> {
     let validator;
     validator = validatorMap.sync[validatorKey];
     if (validator) {
         return validator;
+    } else if (!async) {
+        throw (`${validatorKey} is not present in the sync ValidatorMap`);
     }
     validator = validatorMap.async[validatorKey];
     if (validator) {
         return validator;
     }
-
     throw Error(`${validatorKey} is not present in the validatorMap`);
 }
 

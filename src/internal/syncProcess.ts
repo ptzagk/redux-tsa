@@ -15,7 +15,7 @@ export default function process<S>({
         for (const fieldKey of Object.keys(validatorKeyMap)) {
             const checkInput = getCheckInput({action, state, fieldKey });
             for (const validatorKey of validatorKeyMap[fieldKey]) {
-                const { check } = getValidator(validatorMap,validatorKey);
+                const { check } = getValidator(validatorMap,validatorKey, false);
                 if (!check(checkInput)) {
                     return false;
                 }
@@ -25,37 +25,57 @@ export default function process<S>({
     }
 
     function normalProcess(): types.ProcessOutput {
-        function getFailures(): types.Failure[] {
-            const failures: types.Failure[] = [];
-
-            for (const fieldKey of Object.keys(validatorKeyMap)) {
-                let fieldErrors = 0;
-                const checkInput = getCheckInput({ action, state, fieldKey });
-                for (const validatorKey of validatorKeyMap[fieldKey]) {
-                    if (fieldErrors <  mode) {
-                        const { check, error } = getValidator(validatorMap, validatorKey);
-                        let checkOutout, producedError;
-                        try {
-                            checkOutout = check(checkInput)
-                        } catch(e) {
-                            e[processErrorSymbol] = true;
-                            producedError = e;
-                        }
-                        if (!producedError && (checkOutout !== true)) {
-                            let context;
-                            if (checkOutout === false) {
-                                context = {};
-                            } else {
-                                context = checkOutout;
-                            }
-                            producedError = error({ ...checkInput, context });
-                        }
-                        failures.push({ fieldKey, error: producedError });
+            function getResult(
+                { check, error }: types.Validator<S>,
+                fieldKey: string,
+                checkInput: types.CheckInput<S>,
+            ): types.ValidationResult {
+                let checkOutout, producedError;
+                try {
+                    checkOutout = check(checkInput)
+                } catch(e) {
+                    e[processErrorSymbol] = true;
+                    producedError = e;
+                }
+                if (!producedError && (checkOutout !== true)) {
+                    let context;
+                    if (checkOutout === false) {
+                        context = {};
                     } else {
-                        break;
+                        context = checkOutout;
                     }
+                    producedError = error({ ...checkInput, context });
+                }
+
+                if (producedError) {
+                    return {
+                        fieldKey,
+                        error: producedError
+                    };
+                } else {
+                    return true;
                 }
             }
+
+            function getFailures(): types.Failure[] {
+                const failures: types.Failure[] = [];
+
+                for (const fieldKey of Object.keys(validatorKeyMap)) {
+                    let fieldErrors = 0;
+                    const checkInput = getCheckInput({ action, state, fieldKey });
+                    for (const validatorKey of validatorKeyMap[fieldKey]) {
+                        if (fieldErrors < mode) {
+                            const validator = getValidator(validatorMap, validatorKey, false);
+                            const result = getResult(validator, fieldKey, checkInput);
+                            if (result !== true) {
+                                failures.push(result);
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
             return failures;
         }
 
