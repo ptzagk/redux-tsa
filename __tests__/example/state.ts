@@ -1,6 +1,7 @@
 export interface State {
     notes: string[];
     amounts: number[];
+    [key: string]: any;
 }
 
 const state: State = {

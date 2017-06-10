@@ -1,4 +1,5 @@
 import * as types from "../../src/types";
+import * as Redux from "redux";
 
 import { State } from "./state";
 
@@ -34,7 +35,7 @@ const syncValidators: types.SyncValidatorMap<State> = {
       error({ fieldKey, field }) {
           return `${fieldKey} must be at least 10 characters long, it is current ${field.length}`
       }
-  }
+  },
 }
 
 const asyncValidators: types.AsyncValidatorMap<State> = {
@@ -55,3 +56,17 @@ const validatorMap: types.ValidatorMap<State> = {
 }
 
 export default validatorMap;
+
+
+// unique: {
+//     check({ field, action, state }) {
+//         return !state[action.kind].includes(field);
+//     },
+//     error({ field, action}) {
+//         return `a ${field}`
+//     }
+// }
+// interface AddNote extends Redux.Action {
+//     kind: string;
+//     note: string;
+// }
