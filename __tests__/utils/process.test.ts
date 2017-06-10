@@ -5,7 +5,7 @@ import state from "../example/state";
 
 import * as types from "../../src/types";
 
-describe("process utilities", () => {
+describe("process utils", () => {
 
     describe("getCheckInput", () => {
         test("produces checkInput", () => {

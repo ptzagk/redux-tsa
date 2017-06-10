@@ -1,16 +1,16 @@
-import { asyncSymbol, modeSymbol, reduxTSASymbol, validatorKeyMapSymbol } from "../symbols";
+import { asyncSymbol, modeSymbol, validatorKeyMapSymbol } from "../symbols";
 
 import * as types from "types";
 
 export function generateErrorType(type: string): string {
-    return `${reduxTSASymbol}/${type}_ERROR`;
+    return `@@redux-tsa/${type}_ERROR`;
 }
 
 interface ValidateInput {
     action: types.Action;
     validatorKeyMap: types.ValidatorKeyMap;
-    mode: number;
-    async: boolean;
+    mode?: number;
+    async?: boolean;
 }
 
 export function validate({
