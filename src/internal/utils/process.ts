@@ -76,3 +76,32 @@ export function buildErrorMaps(failures: types.Failure[]): types.ErrorMaps {
 
     return { fieldErrors, processErrors };
 }
+
+type Test = <A>(val: any) => A | false
+
+export const skurt =  <B>(test: Test) => (n: number) => <A>(ps: Iterable<Promise<A>>): Promise<B[]> =>  {
+    function runSkurt<A, B>(test: Test, n: number, ps: Iterable<Promise<A>>): Promise<B[]> {
+        return new Promise((resolve, reject) => {
+            let results: any[] = [];
+            for (const p of Array.from(ps)) {
+                p
+                .then((result) => {
+                    if (test(result)) {
+                        results = [...results, result];
+                    }
+                    if (results.length === n) {
+                        resolve(results);
+                    }
+                })
+                .catch(reject);
+            }
+        });
+    }
+
+    return Promise.race(
+        [
+            runSkurt(test, n, ps),
+            Promise.all(ps).then(results => results.filter(test))
+        ])
+        .then(results => results.slice(0, n));
+}

@@ -8,7 +8,7 @@
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "test": "jest",
     "cov": "jest --coverage",
-    "sandbox": "jest public.test.ts"
+    "sandbox": "jest general.test.ts"
   },
   "author": "Mateusz Okon <teuszokon@gmail.com> (http://mateuszokon.com/)",
   "license": "MIT",
