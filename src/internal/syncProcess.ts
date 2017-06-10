@@ -68,6 +68,7 @@ export default function process<S>({
                             const validator = getValidator(validatorMap, validatorKey, false);
                             const result = getResult(validator, fieldKey, checkInput);
                             if (result !== true) {
+                                fieldErrors += 1;
                                 failures.push(result);
                             }
                         } else {

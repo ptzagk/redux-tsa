@@ -24,8 +24,17 @@ const syncValidators: types.SyncValidatorMap<State> = {
       return field < 1000;
   },
     error({ fieldKey, field }) {
-      return `${field} is not a reasonable for ${field}`;
+      return `${field} is not reasonable for ${fieldKey}`;
     },
+  },
+
+  even: {
+      check({ field }) {
+         return Number.isInteger(field / 2);
+     },
+      error({ fieldKey}) {
+          return `${fieldKey} must be even`
+      }
   },
 
   longerThanTen: {
@@ -33,9 +42,19 @@ const syncValidators: types.SyncValidatorMap<State> = {
           return field.length > 10;
       },
       error({ fieldKey, field }) {
-          return `${fieldKey} must be at least 10 characters long, it is current ${field.length}`
+          return `${fieldKey} must be at more than 10 characters long, it is currently ${field.length}`
       }
   },
+
+  sweet: {
+      check({ field }) {
+          return field.includes("sugar");
+      },
+      error({ fieldKey, field }) {
+          return `${fieldKey} must be sweet, and ${field} does not contain sugar`
+      }
+  }
+
 }
 
 const asyncValidators: types.AsyncValidatorMap<State> = {
