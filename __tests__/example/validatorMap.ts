@@ -53,8 +53,25 @@ const syncValidators: types.SyncValidatorMap<State> = {
       error({ fieldKey, field }) {
           return `${fieldKey} must be sweet, and ${field} does not contain sugar`
       }
-  }
+  },
 
+  confusedCheck: {
+      check() {
+          return { hint: `${Symbol("there")}`};
+      },
+      error() {
+          return "something is wrong"
+      }
+  },
+
+  confusedError: {
+      check() {
+          return false;
+      },
+      error() {
+          return `${Symbol("there")}`;
+      }
+  }
 }
 
 const asyncValidators: types.AsyncValidatorMap<State> = {

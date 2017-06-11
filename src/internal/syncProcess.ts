@@ -16,9 +16,14 @@ export default function process<S>({
             const checkInput = getCheckInput({action, state, fieldKey });
             for (const validatorKey of validatorKeyMap[fieldKey]) {
                 const { check } = getValidator(validatorMap,validatorKey, false);
-                if (!check(checkInput)) {
+                try {
+                    if (!check(checkInput)) {
+                        return false;
+                    }
+                } catch(e) {
                     return false;
                 }
+
             }
         }
         return true;
@@ -44,7 +49,12 @@ export default function process<S>({
                     } else {
                         context = checkOutout;
                     }
-                    producedError = error({ ...checkInput, context });
+                    try {
+                        producedError = error({ ...checkInput, context });
+                    } catch(e) {
+                        e[processErrorSymbol] = true;
+                        producedError = e;
+                    }
                 }
 
                 if (producedError) {
