@@ -14,7 +14,7 @@ export default function asyncProcess<S>({
 }: types.ProcessInput<S>): Promise<types.ProcessOutput> {
 
     function failure(result: types.ValidationResult): boolean {
-        return result !== true
+        return result !== true;
     }
 
     function binaryProcess(): Promise<types.ProcessOutput> {

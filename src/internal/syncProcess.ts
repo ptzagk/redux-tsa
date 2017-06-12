@@ -1,5 +1,5 @@
 import { processErrorSymbol } from "./symbols";
-import { getValidator, getCheckInput,  buildErrorMaps } from "./utils/process";
+import { buildErrorMaps, getCheckInput, getValidator } from "./utils/process";
 
 import * as types from "types";
 
@@ -13,7 +13,7 @@ export default function process<S>({
 
     function binaryProcess(): types.ProcessOutput {
         for (const fieldKey of Object.keys(validatorKeyMap)) {
-            const checkInput = getCheckInput({action, state, fieldKey });
+            const checkInput = getCheckInput({ action, state, fieldKey });
             for (const validatorKey of validatorKeyMap[fieldKey]) {
                 const { check } = getValidator(validatorMap,validatorKey, false);
                 try {
@@ -37,7 +37,7 @@ export default function process<S>({
             ): types.ValidationResult {
                 let checkOutout, producedError;
                 try {
-                    checkOutout = check(checkInput)
+                    checkOutout = check(checkInput);
                 } catch(e) {
                     e[processErrorSymbol] = true;
                     producedError = e;
@@ -60,7 +60,7 @@ export default function process<S>({
                 if (producedError) {
                     return {
                         fieldKey,
-                        error: producedError
+                        error: producedError,
                     };
                 } else {
                     return true;
@@ -86,11 +86,11 @@ export default function process<S>({
                         }
                     }
                 }
-                
-                return failures;
-        }
 
-        return ((failures) => failures.length ? buildErrorMaps(failures) : true)(getFailures());
+                return failures;
+            }
+
+            return ((failures) => failures.length ? buildErrorMaps(failures) : true)(getFailures());
     }
 
     return (mode === 0) ? binaryProcess() : normalProcess();

@@ -20,7 +20,7 @@ export function getCheckInput<S>({ action, state, fieldKey }: GetCheckInputInput
 export function getValidator<S>(
     validatorMap: types.ValidatorMap<S>,
     validatorKey: string,
-    async: boolean
+    async: boolean,
 ): types.Validator<S> {
     const syncValidator = validatorMap.sync[validatorKey];
     const asyncValidator = validatorMap.async[validatorKey];
@@ -38,7 +38,6 @@ export function getValidator<S>(
     return syncValidator ? syncValidator : asyncValidator;
 }
 
-
 interface UpdateErrorMapsInput extends types.ErrorMaps {
     fieldKey: string;
     error: types.TSAError;
@@ -51,20 +50,20 @@ export function buildErrorMaps(failures: types.Failure[]): types.ErrorMaps {
     function updateErrorMaps({
         fieldKey,
         error,
-        fieldErrors,
-        processErrors,
+        fieldErrors: currentFieldErrors,
+        processErrors: currentProcessErrors,
     }: UpdateErrorMapsInput ): void {
         if (typeof error !== "string" && error[processErrorSymbol]) {
-            if (processErrors[fieldKey]) {
-                processErrors[fieldKey].push(error);
+            if (currentProcessErrors[fieldKey]) {
+                currentProcessErrors[fieldKey].push(error);
             } else {
-                processErrors[fieldKey] = [ error ];
+                currentProcessErrors[fieldKey] = [ error ];
             }
         } else {
-            if (fieldErrors[fieldKey]) {
-                fieldErrors[fieldKey].push(error);
+            if (currentFieldErrors[fieldKey]) {
+                currentFieldErrors[fieldKey].push(error);
             } else {
-                fieldErrors[fieldKey] = [ error ];
+                currentFieldErrors[fieldKey] = [ error ];
             }
         }
     }
