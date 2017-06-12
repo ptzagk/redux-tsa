@@ -45,17 +45,17 @@ export default function asyncProcess<S>({
                     return true;
                 } else {
                     const context = (result === false) ? {} : result;
-                    return error({ ...checkInput, context });
+                    return {
+                        fieldKey,
+                        error: error({ ...checkInput, context }),
+                    }
                 }
             })
             .catch((externalError) => {
                 externalError[processErrorSymbol] = true;
-                return externalError;
-            })
-            .then((producedError) => {
                 return {
                     fieldKey,
-                    error: producedError,
+                    error: externalError,
                 };
             });
         }

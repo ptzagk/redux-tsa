@@ -8,13 +8,13 @@ function detectPoetry(data: any): Promise<types.CheckOutput> {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             if (data === "less is more when more is too much") {
-                return true;
+                resolve(true);
             } else {
-                return {
+                resolve({
                     example: "less is more when more is too much"
-                };
+                });
             }
-        }, 1000);
+        }, 50);
     });
 }
 
@@ -89,7 +89,7 @@ const asyncValidators: types.AsyncValidatorMap<State> = {
           return new Promise((resolve, reject) => {
               setTimeout(() => {
                   resolve(field !== "john");
-              }, 1000)
+              }, 50)
             });
         },
       error({ field }) {
@@ -100,16 +100,15 @@ const asyncValidators: types.AsyncValidatorMap<State> = {
         check({ field, action }) {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    resolve(field > 150 && action.username.contains("grape"));
-                }, 1000);
-            });
+                    resolve(field > 150 && action.username.includes("grape"));
+                }, 50);
+            })
         },
         error() {
-            return "the authority declines the trasnaction"
+            return "the authority declines the transaction"
         }
     }
 }
-
 
 const validatorMap: types.ValidatorMap<State> = {
   sync: syncValidators,

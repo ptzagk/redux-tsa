@@ -106,123 +106,131 @@ describe("asyncProcess", () => {
             expect(result).toEqual(true);
         })
 
-        // test("mode=1 process greenlights conforming action", async () => {
-        //     const processInput: types.ProcessInput<State> = {
-        //         ...baseProcessInput,
-        //         async: true,
-        //         mode: 1,
-        //     };
-        //
-        //     const result = await asyncProcess(processInput);
-        //
-        //     expect(result).toEqual(true);
-        // })
+        test("mode=1 process greenlights conforming action", async () => {
+            const processInput: types.ProcessInput<State> = {
+                ...baseProcessInput,
+                async: true,
+                mode: 1,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual(true);
+        })
     })
-    //
-    // describe("greenlights conforming action using only async validators", () => {
-    //     const action = {
-    //         type: "ADD_NOTE",
-    //         username: "grape",
-    //         note: "less is more when more is too much",
-    //     };
-    //
-    //     const validatorKeyMap = {
-    //         username: ["available"],
-    //         note: ["poetic"],
-    //     };
-    //
-    //
-    //     const baseProcessInput = {
-    //         action,
-    //         state,
-    //         validatorMap,
-    //         validatorKeyMap
-    //     };
-    //
-    //     test("binary process greenlights conforming action", () => {
-    //         const processInput: types.ProcessInput<State> = {
-    //             ...baseProcessInput,
-    //             async: true,
-    //             mode: 0,
-    //         };
-    //
-    //         expect(asyncProcess(processInput)).toEqual(Promise.resolve(true));
-    //     });
-    //
-    //     test("infinite process greenlights conforming action", () => {
-    //         const processInput: types.ProcessInput<State> = {
-    //             ...baseProcessInput,
-    //             async: true,
-    //             mode: Infinity,
-    //         };
-    //
-    //         expect(asyncProcess(processInput)).toEqual(Promise.resolve(true));
-    //     })
-    //
-    //     test("mode=1 process greenlights conforming action", () => {
-    //         const processInput: types.ProcessInput<State> = {
-    //             ...baseProcessInput,
-    //             async: true,
-    //             mode: 1,
-    //         };
-    //
-    //         expect(asyncProcess(processInput)).toEqual(Promise.resolve(true));
-    //     })
-    // })
 
-    // describe("greenlights conforming action using mixed validators", () => {
-    //     const action = {
-    //         type: "ADD_NOTE",
-    //         username: "sugar12",
-    //         donation: 175,
-    //     };
-    //
-    //     const validatorKeyMap = {
-    //         username: ["sweet", "longerThanTen", "available"],
-    //         donation: ["even", "reasonable", "approved"],
-    //     };
-    //
-    //     const baseProcessInput = {
-    //         action,
-    //         state,
-    //         validatorMap,
-    //         validatorKeyMap
-    //     };
-    //
-    //     test("binary process greenlights conforming action", async () => {
-    //         const processInput: types.ProcessInput<State> = {
-    //             ...baseProcessInput,
-    //             async: true,
-    //             mode: 0,
-    //         };
-    //
-    //         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-    //
-    //         const result = await asyncProcess(processInput);
-    //
-    //         console.log(result);
-    //
-    //         // expect(asyncProcess(processInput)).toEqual(Promise.resolve(false));
-    //     });
+    describe("greenlights conforming action using only async validators", () => {
+        const action = {
+            type: "ADD_NOTE",
+            username: "grape",
+            note: "less is more when more is too much",
+        };
 
-        // test("infinite process greenlights conforming action", () => {
-        //     const processInput: types.ProcessInput<State> = {
-        //         ...baseProcessInput,
-        //         async: true,
-        //         mode: Infinity,
-        //     };
-        //
-        //     expect(asyncProcess(processInput)).toEqual(Promise.resolve(true));
-        // })
-        //
-        // test("mode=1 process greenlights conforming action", () => {
-        //     const processInput: types.ProcessInput<State> = {
-        //         ...baseProcessInput,
-        //         async: true,
-        //         mode: 1,
-        //     };
-        //
-        //     expect(asyncProcess(processInput)).toEqual(Promise.resolve(true));
-        // })
-    // })
+        const validatorKeyMap = {
+            username: ["available"],
+            note: ["poetic"],
+        };
+
+        const baseProcessInput = {
+            action,
+            state,
+            validatorMap,
+            validatorKeyMap
+        };
+
+        test("binary process greenlights conforming action", async () => {
+            const processInput: types.ProcessInput<State> = {
+                ...baseProcessInput,
+                async: true,
+                mode: 0,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            return expect(result).toEqual(true);
+        });
+
+        test("infinite process greenlights conforming action", async () => {
+            const processInput: types.ProcessInput<State> = {
+                ...baseProcessInput,
+                async: true,
+                mode: Infinity,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual(true);
+        })
+
+        test("mode=1 process greenlights conforming action", async () => {
+            const processInput: types.ProcessInput<State> = {
+                ...baseProcessInput,
+                async: true,
+                mode: 1,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual(true);
+        })
+    })
+
+    describe("greenlights conforming action using mixed validators", () => {
+        const action = {
+            type: "ADD_NOTE",
+            username: "sugargrape12",
+            donation: 550,
+        };
+
+        const validatorKeyMap = {
+            username: ["sweet", "longerThanTen", "available"],
+            donation: ["even", "reasonable", "approved"],
+        };
+
+        const baseProcessInput = {
+            action,
+            state,
+            validatorMap,
+            validatorKeyMap,
+        };
+
+        test("binary process greenlights conforming action", async () => {
+            const processInput: types.ProcessInput<State> = {
+                ...baseProcessInput,
+                async: true,
+                mode: 0,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual(true);
+
+        });
+
+        test("infinite process greenlights conforming action", async () => {
+            const processInput: types.ProcessInput<State> = {
+                ...baseProcessInput,
+                async: true,
+                mode: Infinity,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual(true);
+
+        })
+
+        test("mode=1 process greenlights conforming action", async () => {
+            const processInput: types.ProcessInput<State> = {
+                ...baseProcessInput,
+                async: true,
+                mode: 1,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual(true);
+
+        })
+    })
 })

@@ -27,7 +27,6 @@ describe("skurt", () => {
         const threeHundreds = await getHundreds(3)(ps);
         const allHundreds = await getHundreds(Infinity)(ps);
 
-
         expect(noHundreds).toEqual([]);
         expect(oneHundreds).toEqual([100]);
         expect(twoHundreds).toEqual([100,100]);
