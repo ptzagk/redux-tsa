@@ -7,11 +7,11 @@ import { State } from "./state";
 function detectPoetry(data: any): Promise<types.CheckOutput> {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if ((typeof data) === "string") {
+            if (data === "less is more when more is too much") {
                 return true;
             } else {
                 return {
-                    juice: "grapefuit"
+                    example: "less is more when more is too much"
                 };
             }
         }, 1000);
@@ -80,11 +80,36 @@ const asyncValidators: types.AsyncValidatorMap<State> = {
       // isPoetic calls an API that determines if something is poetic
       return await detectPoetry(field)
   },
-    error({ fieldKey, field }) {
-      return `${fieldKey} must be poetic: ${field} is not poetic`;
+    error({ fieldKey, field, context: { example } }) {
+      return `${fieldKey} must be poetic: ${field} is not poetic. ${example} is poetic`;
     },
   },
+  available: {
+      check({ field }) {
+          return new Promise((resolve, reject) => {
+              setTimeout(() => {
+                  resolve(field !== "john");
+              }, 1000)
+            });
+        },
+      error({ field }) {
+            return `${field} is unavailable`;
+        },
+    },
+    approved: {
+        check({ field, action }) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve(field > 150 && action.username.contains("grape"));
+                }, 1000);
+            });
+        },
+        error() {
+            return "the authority declines the trasnaction"
+        }
+    }
 }
+
 
 const validatorMap: types.ValidatorMap<State> = {
   sync: syncValidators,

@@ -1,6 +1,6 @@
 import { processErrorSymbol } from "./symbols";
 import { flatten } from "./utils/general";
-import { getCheckInput, getValidator, buildErrorMaps} from "./utils/process";
+import { buildErrorMaps, getCheckInput, getValidator } from "./utils/process";
 import skurt from "./utils/skurt";
 
 import * as types from "types";
@@ -13,8 +13,8 @@ export default function asyncProcess<S>({
     mode,
 }: types.ProcessInput<S>): Promise<types.ProcessOutput> {
 
-    function failure(result: types.ValidationResult): types.Failure | false{
-        return (result !== true) ? result : false;
+    function failure(result: types.ValidationResult): boolean {
+        return result !== true
     }
 
     function binaryProcess(): Promise<types.ProcessOutput> {
@@ -27,7 +27,7 @@ export default function asyncProcess<S>({
             }
         }
 
-        return skurt(failure)(1)(results).then((failures => !failures.length));
+        return skurt(failure)(1)(results).then((failures) => !failures.length);
     }
 
     function normalProcess(): Promise<types.ProcessOutput> {
@@ -52,27 +52,27 @@ export default function asyncProcess<S>({
                 externalError[processErrorSymbol] = true;
                 return externalError;
             })
-            .then((error) => {
+            .then((producedError) => {
                 return {
                     fieldKey,
-                    error
+                    error: producedError,
                 };
             });
         }
 
-        function getFieldFailures(): Promise<types.Failure[]>[] {
+        function getFieldFailures(): Array<Promise<types.Failure[]>> {
             const findFailures = skurt(failure)(mode);
-            const fieldResults: Promise<types.Failure[]>[] = [];
+            const fieldResults: Array<Promise<types.Failure[]>> = [];
 
             for (const fieldKey of Object.keys(validatorKeyMap)) {
-                const fieldResult: Promise<types.ValidationResult>[] = [];
+                const fieldResult: Array<Promise<types.ValidationResult>> = [];
                 const checkInput = getCheckInput({ action, state, fieldKey});
                 for (const validatorKey of validatorKeyMap[fieldKey]) {
                     const validator = getValidator(validatorMap, validatorKey, true);
                     const result = getResult(validator, fieldKey, checkInput);
                     fieldResult.push(result);
                 }
-                fieldResults.push(findFailures(fieldResult))
+                fieldResults.push(findFailures(fieldResult));
             }
 
             return fieldResults;
@@ -80,7 +80,7 @@ export default function asyncProcess<S>({
 
         return Promise.all(getFieldFailures())
             .then(flatten)
-            .then(failures => {
+            .then((failures) => {
                 if (failures.length) {
                     return buildErrorMaps(failures);
                 } else {

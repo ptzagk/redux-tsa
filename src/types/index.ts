@@ -97,7 +97,7 @@ export type OnError = (type: string, fieldErrors: ErrorMap, processErrors: Error
 
 export interface MiddlewareConfig<S> {
     validatorMap: ValidatorMap<S>;
-    onError: OnError;
+    onError?: OnError;
 }
 
 export interface ProcessInput<S> {

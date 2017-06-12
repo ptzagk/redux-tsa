@@ -86,8 +86,8 @@ export default function process<S>({
                         }
                     }
                 }
-
-            return failures;
+                
+                return failures;
         }
 
         return ((failures) => failures.length ? buildErrorMaps(failures) : true)(getFailures());

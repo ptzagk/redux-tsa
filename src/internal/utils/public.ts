@@ -17,7 +17,7 @@ export function validate({
     action,
     validatorKeyMap,
     mode = Infinity,
-    async = false
+    async = false,
 }: ValidateInput): types.Action {
     return {
         ...action,
