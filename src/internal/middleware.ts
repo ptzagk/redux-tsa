@@ -65,7 +65,7 @@ export default function configureReduxTSA<S>({
             };
 
             if (action[asyncSymbol]) {
-                asyncProcess(processInput).then(handleOutput);
+                return asyncProcess(processInput).then(handleOutput);
             } else {
                 handleOutput(syncProcess(processInput));
             }

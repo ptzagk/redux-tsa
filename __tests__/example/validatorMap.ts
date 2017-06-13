@@ -14,7 +14,7 @@ function detectPoetry(data: any): Promise<types.CheckOutput> {
                     example: "less is more when more is too much"
                 });
             }
-        }, 50);
+        }, 25);
     });
 }
 
@@ -24,7 +24,8 @@ const syncValidators: types.SyncValidatorMap<State> = {
       return field < 1000;
   },
     error({ fieldKey, field }) {
-      return `${field} is not reasonable for ${fieldKey}`;
+    return `${field} is not a reasonable ${fieldKey}`;
+    //   return `${field} is not a reasonable ${fieldKey}`;
     },
   },
 
@@ -33,7 +34,7 @@ const syncValidators: types.SyncValidatorMap<State> = {
          return Number.isInteger(field / 2);
      },
       error({ fieldKey}) {
-          return `${fieldKey} must be even`
+          return `${fieldKey} must be even`;
       }
   },
 
@@ -89,7 +90,7 @@ const asyncValidators: types.AsyncValidatorMap<State> = {
           return new Promise((resolve, reject) => {
               setTimeout(() => {
                   resolve(field !== "john");
-              }, 50)
+              }, 25)
             });
         },
       error({ field }) {
@@ -100,8 +101,8 @@ const asyncValidators: types.AsyncValidatorMap<State> = {
         check({ field, action }) {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    resolve(field > 150 && action.username.includes("grape"));
-                }, 50);
+                    resolve(field > 125 && action.username.includes("grape"));
+                }, 25);
             })
         },
         error() {

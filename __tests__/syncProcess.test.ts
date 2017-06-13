@@ -140,7 +140,7 @@ describe("syncProcess", () => {
                         "username must be sweet, and franklin does not contain sugar"
                     ],
                     donation: [
-                        "5001 is not reasonable for donation",
+                        "5001 is not a reasonable donation",
                         "donation must be even",
                     ]
                 },
@@ -157,7 +157,7 @@ describe("syncProcess", () => {
             expect((syncProcess(processInput))).toEqual({
                 fieldErrors: {
                     username: ["username must be at more than 10 characters long, it is currently 8"],
-                    donation: ["5001 is not reasonable for donation"],
+                    donation: ["5001 is not a reasonable donation"],
                 },
                 processErrors: {}
             });
@@ -299,7 +299,7 @@ describe("syncProcess", () => {
                         "username must be sweet, and franklin does not contain sugar"
                     ],
                     donation: [
-                        "5001 is not reasonable for donation",
+                        "5001 is not a reasonable donation",
                         "donation must be even",
                     ]
                 },
