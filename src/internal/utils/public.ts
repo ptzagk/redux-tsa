@@ -10,17 +10,34 @@ export interface ValidateInput<S, A extends types.Action> {
     action: A;
     validatorMap: types.ValidatorMap<S,A>;
     mode?: number;
-    async?: boolean;
 }
 
 export function validate<S,A extends types.Action>({
     action,
     validatorMap,
     mode = Infinity,
-    async = false,
-}: ValidateInput<S,A>): types.Action {
+}: ValidateInput<S,A>): A {
     const validation = {
-        [asyncSymbol]: async,
+        [asyncSymbol]: true,
+        [modeSymbol]: mode,
+        [validatorMapSymbol]: validatorMap
+    };
+    return Object.assign({}, action, validation);
+}
+
+export interface ValidateSyncInput<S, A extends types.Action> {
+    action: A;
+    validatorMap: types.SyncValidatorMap<S,A>;
+    mode?: number;
+}
+
+export function validateSync<S,A extends types.Action>({
+    action,
+    validatorMap,
+    mode = Infinity,
+}: ValidateSyncInput<S,A>): A {
+    const validation = {
+        [asyncSymbol]: false,
         [modeSymbol]: mode,
         [validatorMapSymbol]: validatorMap
     };

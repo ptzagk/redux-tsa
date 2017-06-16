@@ -1,2 +1,2 @@
 export { default } from "./internal/middleware";
-export { validate, generateErrorType } from "./internal/utils/public";
+export { generateErrorType, validate, validateSync} from "./internal/utils/public";

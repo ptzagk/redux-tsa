@@ -30,12 +30,6 @@ export type ProduceError<
     K extends keyof A
 > = (input: ValidatorInput<S,A,K>) => TSAError;
 
-export type ValidatorMap<S, A extends Redux.Action> = {
-    [K in keyof A]: Validator<S,A,K>[]
-}
-
-//  K extends keyof A
-
 export interface SyncValidator<
     S,
     A extends Redux.Action,
@@ -55,6 +49,14 @@ export interface AsyncValidator<
 }
 
 export type Validator<S, A extends Redux.Action, K extends keyof A> = SyncValidator<S,A,K> | AsyncValidator<S,A,K>;
+
+export type SyncValidatorMap<S, A extends Redux.Action> = {
+    [K in keyof A]?: SyncValidator<S,A,K>[]
+}
+
+export type ValidatorMap<S, A extends Redux.Action> = {
+    [K in keyof A]?: Validator<S,A,K>[]
+}
 
 export interface ErrorLike {
     message: string;
