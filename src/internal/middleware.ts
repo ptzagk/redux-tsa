@@ -1,24 +1,28 @@
 import * as Redux from "redux";
 
 import asyncProcess from "./asyncProcess";
-import { asyncSymbol, modeSymbol, validatorKeyMapSymbol } from "./symbols";
+import { asyncSymbol, modeSymbol, validatorMapSymbol } from "./symbols";
 import syncProcess from "./syncProcess";
 import { generateErrorType } from "./utils/public";
 
-import * as types from "types";
+import * as types from "../types";
 
-function defaultOnError(
+export interface DefaultErrorAction extends Redux.Action {
+    fieldErrors: types.ErrorMap;
+    processErrors: types.ErrorMap;
+}
+
+export function defaultOnError(
     type: string,
     fieldErrors: types.ErrorMap,
     processErrors: types.ErrorMap,
-): types.Action {
+): DefaultErrorAction {
     return { type, fieldErrors, processErrors };
 }
 
-export default function configureReduxTSA<S>({
-    validatorMap,
-    onError = defaultOnError,
-}: types.MiddlewareConfig<S>): Redux.Middleware {
+export default function configureReduxTSA(
+    onError: types.OnError = defaultOnError
+): Redux.Middleware {
 
     function generateErrorAction(
         actionType: string,
@@ -29,7 +33,7 @@ export default function configureReduxTSA<S>({
         return onError(type, fieldErrors, processErrors);
     }
 
-    return (store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) => (action: types.Action) => {
+    return <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) => <A extends types.Action>(action: A) => {
 
         function handleOutput(result: types.ProcessOutput): void {
             if (result === true) {
@@ -55,13 +59,12 @@ export default function configureReduxTSA<S>({
             }
         }
 
-        if (action[validatorKeyMapSymbol]) {
-            const processInput: types.ProcessInput<S> = {
+        if (action[validatorMapSymbol]) {
+            const processInput: types.ProcessInput<S,A> = {
                 action,
-                validatorMap,
                 mode: action[modeSymbol] as number,
                 state: store.getState(),
-                validatorKeyMap: (action[validatorKeyMapSymbol]) as types.ValidatorKeyMap,
+                validatorMap: action[validatorMapSymbol] as types.ValidatorMap<S,A>,
             };
 
             if (action[asyncSymbol]) {

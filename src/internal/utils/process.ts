@@ -1,41 +1,22 @@
 import { processErrorSymbol } from "../symbols";
 
-import * as types from "types";
+import * as types from "../../types";
 
-interface GetCheckInputInput<S> {
-    action: types.Action;
+export interface GetValidatorInputInput<S, A extends types.Action, K extends keyof A> {
+    action: A;
     state: S;
-    fieldKey: string;
+    fieldKey: K;
 }
 
-export function getCheckInput<S>({ action, state, fieldKey }: GetCheckInputInput<S>): types.CheckInput<S> {
+export function getValidatorInput<S, A extends types.Action, K extends keyof A>(
+    { action, state, fieldKey }: GetValidatorInputInput<S,A,K>
+): types.ValidatorInput<S, A, K> {
     return {
         action,
         state,
         fieldKey,
         field: action[fieldKey],
     };
-}
-
-export function getValidator<S>(
-    validatorMap: types.ValidatorMap<S>,
-    validatorKey: string,
-    async: boolean,
-): types.Validator<S> {
-    const syncValidator = validatorMap.sync[validatorKey];
-    const asyncValidator = validatorMap.async[validatorKey];
-    if (!syncValidator && !asyncValidator) {
-        throw Error(`${validatorKey} not found in the validatorMap`);
-    }
-    if (syncValidator && asyncValidator) {
-        throw Error(`${validatorKey} cannot be in both the syncValidatorMap and the asyncValidatorMap`);
-    }
-
-    if (asyncValidator && !async) {
-        throw Error("async process must be on to use an async validator");
-    }
-
-    return syncValidator ? syncValidator : asyncValidator;
 }
 
 interface UpdateErrorMapsInput extends types.ErrorMaps {
@@ -79,3 +60,24 @@ export function buildErrorMaps(failures: types.Failure[]): types.ErrorMaps {
 
     return { fieldErrors, processErrors };
 }
+
+// export function getValidator<S>(
+//     validatorMap: types.ValidatorMap<S>,
+//     validatorKey: string,
+//     async: boolean,
+// ): types.Validator<S> {
+//     const syncValidator = validatorMap.sync[validatorKey];
+//     const asyncValidator = validatorMap.async[validatorKey];
+//     if (!syncValidator && !asyncValidator) {
+//         throw Error(`${validatorKey} not found in the validatorMap`);
+//     }
+//     if (syncValidator && asyncValidator) {
+//         throw Error(`${validatorKey} cannot be in both the syncValidatorMap and the asyncValidatorMap`);
+//     }
+//
+//     if (asyncValidator && !async) {
+//         throw Error("async process must be on to use an async validator");
+//     }
+//
+//     return syncValidator ? syncValidator : asyncValidator;
+// }

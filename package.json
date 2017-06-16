@@ -8,7 +8,7 @@
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "test": "jest",
     "cov": "jest --coverage",
-    "sandbox": "jest middleware.test.ts"
+    "sandbox": "jest --coverage public.test.ts"
   },
   "author": "Mateusz Okon <teuszokon@gmail.com> (http://mateuszokon.com/)",
   "license": "MIT",
@@ -26,6 +26,7 @@
     "redux": "^3.6.0"
   },
   "jest": {
+    "mapCoverage": true,
     "testPathIgnorePatterns": [
       "example"
     ],

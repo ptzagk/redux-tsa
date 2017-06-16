@@ -1,56 +1,47 @@
 import { processErrorSymbol } from "./symbols";
-import { buildErrorMaps, getCheckInput, getValidator } from "./utils/process";
+import { buildErrorMaps, getValidatorInput } from "./utils/process";
 
-import * as types from "types";
+import * as types from "../types";
 
-export default function process<S>({
+export default function syncProcess<S, A extends types.Action>({
     state,
     action,
     validatorMap,
-    validatorKeyMap,
     mode,
-}: types.ProcessInput<S>): types.ProcessOutput {
+}: types.ProcessInput<S,A>): types.ProcessOutput {
 
     function binaryProcess(): types.ProcessOutput {
-        for (const fieldKey of Object.keys(validatorKeyMap)) {
-            const checkInput = getCheckInput({ action, state, fieldKey });
-            for (const validatorKey of validatorKeyMap[fieldKey]) {
-                const { check } = getValidator(validatorMap,validatorKey, false);
+        for (const fieldKey of Object.keys(validatorMap)) {
+            const validatorInput = getValidatorInput({ action, state, fieldKey });
+            for (const validator of validatorMap[fieldKey]) {
                 try {
-                    if (!check(checkInput)) {
+                    if (!validator.check(validatorInput)) {
                         return false;
                     }
                 } catch(e) {
                     return false;
                 }
-
             }
         }
         return true;
     }
 
     function normalProcess(): types.ProcessOutput {
-            function getResult(
-                { check, error }: types.Validator<S>,
-                fieldKey: string,
-                checkInput: types.CheckInput<S>,
+            function getResult<S, A extends types.Action, K extends keyof A>(
+                { check, error }: types.Validator<S, A, K>,
+                fieldKey: K,
+                validatorInput: types.ValidatorInput<S,A,K>,
             ): types.ValidationResult {
-                let checkOutout, producedError;
+                let checkOutput, producedError;
                 try {
-                    checkOutout = check(checkInput);
+                    checkOutput = check(validatorInput);
                 } catch(e) {
                     e[processErrorSymbol] = true;
                     producedError = e;
                 }
-                if (!producedError && (checkOutout !== true)) {
-                    let context;
-                    if (checkOutout === false) {
-                        context = {};
-                    } else {
-                        context = checkOutout;
-                    }
+                if (!producedError && !checkOutput) {
                     try {
-                        producedError = error({ ...checkInput, context });
+                        producedError = error(validatorInput);
                     } catch(e) {
                         e[processErrorSymbol] = true;
                         producedError = e;
@@ -70,16 +61,15 @@ export default function process<S>({
             function getFailures(): types.Failure[] {
                 const failures: types.Failure[] = [];
 
-                for (const fieldKey of Object.keys(validatorKeyMap)) {
+                for (const fieldKey of Object.keys(validatorMap)) {
                     let fieldErrors = 0;
-                    const checkInput = getCheckInput({ action, state, fieldKey });
-                    for (const validatorKey of validatorKeyMap[fieldKey]) {
+                    const validatorInput = getValidatorInput({ action, state, fieldKey });
+                    for (const validator of validatorMap[fieldKey]) {
                         if (fieldErrors < mode) {
-                            const validator = getValidator(validatorMap, validatorKey, false);
-                            const result = getResult(validator, fieldKey, checkInput);
+                            const result = getResult(validator, fieldKey, validatorInput);
                             if (result !== true) {
                                 fieldErrors += 1;
-                                failures.push(result);
+                                failures.push(result as types.Failure);
                             }
                         } else {
                             break;

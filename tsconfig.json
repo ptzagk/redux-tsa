@@ -1,17 +1,15 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/",
-        "sourceMap": true,
+        "outDir": "lib/",
+        "sourceMap": false,
+        "declaration": true,
         "noImplicitAny": true,
+        "noEmitOnError": true,
         "baseUrl": "src",
         "module": "commonjs",
-        "moduleResolution": "node",
         "target": "es5",
-        "lib": [ "ES7", "DOM"],
+        "lib": [ "ES6","ES7","DOM"],
         "jsx": "react"
     },
-    "include": [
-        "src/**/*",
-        "__tests__"
-    ]
+    "include": [ "src/**/*" ]
 }
