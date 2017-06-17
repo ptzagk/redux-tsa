@@ -31,8 +31,16 @@ describe("syncProcess", () => {
             validatorMap
         };
 
+<<<<<<< HEAD
         test("binary process greenlights any action given empty validatorMap", () => {
             const processInput: types.ProcessInput<State, Donation> = {
+||||||| merged common ancestors
+        test("binary process greenlights any action given empty validatorKeyMap", () => {
+            const processInput: types.ProcessInput<State> = {
+=======
+        test("binary process greenlights any action given empty validatorKeyMap", () => {
+            const processInput: types.ProcessInput<State, Donation> = {
+>>>>>>> 4b06406b276157d6b4b93b7c304282b1f4830b2b
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -40,8 +48,16 @@ describe("syncProcess", () => {
             expect(syncProcess(processInput)).toBe(true);
         })
 
+<<<<<<< HEAD
         test("infinite process greenlights any action given empty validatorMap", () => {
             const processInput: types.ProcessInput<State, Donation> = {
+||||||| merged common ancestors
+        test("infinite process greenlights any action given empty validatorKeyMap", () => {
+            const processInput: types.ProcessInput<State> = {
+=======
+        test("infinite process greenlights any action given empty validatorKeyMap", () => {
+            const processInput: types.ProcessInput<State, Donation> = {
+>>>>>>> 4b06406b276157d6b4b93b7c304282b1f4830b2b
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -49,8 +65,16 @@ describe("syncProcess", () => {
             expect(syncProcess(processInput)).toBe(true);
         })
 
+<<<<<<< HEAD
         test("mode=1 process greenlights any action given empty validatorMap", () => {
             const processInput: types.ProcessInput<State, Donation> = {
+||||||| merged common ancestors
+        test("mode=1 process greenlights any action given empty validatorKeyMap", () => {
+            const processInput: types.ProcessInput<State> = {
+=======
+        test("mode=1 process greenlights any action given empty validatorKeyMap", () => {
+            const processInput: types.ProcessInput<State, Donation> = {
+>>>>>>> 4b06406b276157d6b4b93b7c304282b1f4830b2b
                 ...baseProcessInput,
                 mode: 1,
             };

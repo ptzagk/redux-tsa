@@ -364,7 +364,7 @@ describe("asyncProcess", () => {
         const action = login("grape10", "grapelake", "searain");
 
         const validatorMap: types.ValidatorMap<State, Login> = {
-            name: [available, approved, poetic,  sweet,],
+            name: [available, approved, poetic, sweet,],
             password: [approved, longerThanTen],
             confirm: [matchesPassword],
         };

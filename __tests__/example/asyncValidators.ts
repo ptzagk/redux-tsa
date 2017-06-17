@@ -22,6 +22,19 @@ export const poetic: types.AsyncValidator<State, Donation | Login, 'name'> = {
     }
 };
 
+export const available: types.AsyncValidator<State, Login, 'name'> = {
+    check({ field }) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(field !== "john");
+            }, 25)
+          });
+      },
+    error({ field }) {
+          return `${field} is unavailable`;
+      },
+}
+
 export const approved: types.AsyncValidator<State, Login, 'name' | 'password'> = {
     check({ field, action }) {
         return new Promise((resolve, reject) => {

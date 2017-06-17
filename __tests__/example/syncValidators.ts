@@ -47,7 +47,7 @@ export const sweet: types.SyncValidator<State, Login | Donation, 'name'> = {
     },
     error({ fieldKey, field }) {
         return `${fieldKey} must be sweet, and ${field} does not contain sugar`
-    }
+    },
 };
 
 export const matchesPassword: types.SyncValidator<State, Login, "confirm"> = {
