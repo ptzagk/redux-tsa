@@ -1,31 +1,38 @@
 import 'jest';
 
 import syncProcess from '../src/internal/syncProcess';
-import { getCheckInput } from "../src/internal/utils/process";
+import { getValidatorInput } from "../src/internal/utils/process";
 import { processErrorSymbol } from "../src/internal/symbols";
 
-import validatorMap from './example/validatorMap';
 import state, { State } from "./example/state";
+import { donate, Donation } from "./example/actions";
+import {
+    even,
+    confusedCheck,
+    confusedError,
+    longerThanTen,
+    reasonable,
+    sweet
+} from "./example/syncValidators";
+
 
 import * as types from "../src/types";
 
 describe("syncProcess", () => {
 
-    describe("greenlights any action given empty validatorKeyMap", () => {
-        const action = {
-            type: "DONATE",
-            nonsense: "blah blah"
-        };
+    describe("greenlights any action given empty validatorMap", () => {
+        const action = donate("frank", 10);
+
+        const validatorMap: types.SyncValidatorMap<State,Donation> = {};
 
         const baseProcessInput = {
             action,
             state,
-            validatorMap,
-            validatorKeyMap: {}
+            validatorMap
         };
 
         test("binary process greenlights any action given empty validatorKeyMap", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -34,7 +41,7 @@ describe("syncProcess", () => {
         })
 
         test("infinite process greenlights any action given empty validatorKeyMap", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -43,7 +50,7 @@ describe("syncProcess", () => {
         })
 
         test("mode=1 process greenlights any action given empty validatorKeyMap", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };
@@ -53,26 +60,21 @@ describe("syncProcess", () => {
     })
 
     describe("greenlights conforming action", () => {
-        const action = {
-            type: "DONATE",
-            username: "sugarwater10",
-            donation: 500
-        };
+        const action = donate("sugarTrain10", 650);
 
-        const validatorKeyMap = {
-            username: ["longerThanTen", "sweet"],
-            donation: ["reasonable", "even"]
+        const validatorMap: types.SyncValidatorMap<State, Donation> = {
+            name: [sweet],
+            amount: [reasonable, even],
         };
 
         const baseProcessInput = {
             action,
             state,
             validatorMap,
-            validatorKeyMap
         };
 
         test("binary process greenlights conforming action", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -81,7 +83,7 @@ describe("syncProcess", () => {
         });
 
         test("infinite process greenlights conforming action", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -90,7 +92,7 @@ describe("syncProcess", () => {
         })
 
         test("mode=1 process greenlights conforming action", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };
@@ -100,26 +102,22 @@ describe("syncProcess", () => {
     })
 
     describe("flags nonconforming action", () => {
-        const action = {
-            type: "DONATE",
-            username: "franklin",
-            donation: 5001,
-        };
+        const action = donate('salty', 5037);
 
-        const validatorKeyMap = {
-            username: ["longerThanTen", "sweet"],
-            donation: ["reasonable", "even"]
+
+        const validatorMap: types.SyncValidatorMap<State, Donation> = {
+            name: [sweet],
+            amount: [reasonable, even],
         };
 
         const baseProcessInput = {
             action,
             state,
             validatorMap,
-            validatorKeyMap
         };
 
         test("binary process flags nonconforming action", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -128,20 +126,19 @@ describe("syncProcess", () => {
         })
 
         test("infinite process flags all the faults in a nonconforming action", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
 
             expect((syncProcess(processInput))).toEqual({
                 fieldErrors: {
-                    username: [
-                        "username must be at more than 10 characters long, it is currently 8",
-                        "username must be sweet, and franklin does not contain sugar"
+                    name: [
+                        "name must be sweet, and salty does not contain sugar"
                     ],
-                    donation: [
-                        "5001 is not a reasonable donation",
-                        "donation must be even",
+                    amount: [
+                        "5037 is not a reasonable amount",
+                        "amount must be even",
                     ]
                 },
                 processErrors: {}
@@ -149,15 +146,15 @@ describe("syncProcess", () => {
         })
 
         test("mode=1 process flags at most one fault per field in a nonconforming action", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };
 
             expect((syncProcess(processInput))).toEqual({
                 fieldErrors: {
-                    username: ["username must be at more than 10 characters long, it is currently 8"],
-                    donation: ["5001 is not a reasonable donation"],
+                    name: ["name must be sweet, and salty does not contain sugar"],
+                    amount: ["5037 is not a reasonable amount"],
                 },
                 processErrors: {}
             });
@@ -165,106 +162,77 @@ describe("syncProcess", () => {
     })
 
     describe("non-infinite modes are lazy", () => {
-        const action = {
-            type: "DONATE",
-            username: "franklin",
-            donation: 5001,
-        };
-
-        const validatorKeyMap = {
-            username: ["longerThanTen", "sweet"],
-            donation: ["reasonable", "even"]
-        };
+        const action = donate('salty', 5037);
 
         function getBaseProcessInput() {
-            function getMockValidatorMap() {
-                return {
-                    ...validatorMap,
-                    sync: {
-                        ...validatorMap.sync,
-                        sweet: {
-                            check: jest.fn(),
-                            error: jest.fn()
-                        },
-                        even: {
-                            check: jest.fn(),
-                            error: jest.fn()
-                        }
-                    }
-                };
-            }
-
             return {
                 action,
                 state,
-                validatorKeyMap,
-                validatorMap: getMockValidatorMap()
-            };
-
+                validatorMap: {
+                    name: [sweet, { check: jest.fn(), error: jest.fn() }],
+                    amount: [reasonable, { check: jest.fn(), error: jest.fn() }],
+                }
+            }
         }
 
         test("binary process is lazy", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...getBaseProcessInput(),
                 mode: 0,
             };
 
             syncProcess(processInput)
 
-            expect(processInput.validatorMap.sync.sweet.check).not.toBeCalled();
-            expect(processInput.validatorMap.sync.sweet.error).not.toBeCalled();
+            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
+            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
 
-            expect(processInput.validatorMap.sync.even.check).not.toBeCalled();
-            expect(processInput.validatorMap.sync.even.error).not.toBeCalled();
+            expect(processInput.validatorMap.amount[1].check).not.toBeCalled();
+            expect(processInput.validatorMap.amount[1].error).not.toBeCalled();
         })
 
         test("mode=1 process is lazy", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...getBaseProcessInput(),
                 mode: 1,
             };
 
             syncProcess(processInput)
 
-            expect(processInput.validatorMap.sync.sweet.check).not.toBeCalled();
-            expect(processInput.validatorMap.sync.sweet.error).not.toBeCalled();
+            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
+            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
 
-            expect(processInput.validatorMap.sync.even.check).not.toBeCalled();
-            expect(processInput.validatorMap.sync.even.error).not.toBeCalled();
+            expect(processInput.validatorMap.amount[1].check).not.toBeCalled();
+            expect(processInput.validatorMap.amount[1].error).not.toBeCalled();
         })
 
         test("infinite process is eager", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...getBaseProcessInput(),
                 mode: Infinity,
             };
 
             syncProcess(processInput)
 
-            expect(processInput.validatorMap.sync.sweet.check).toBeCalled();
-            expect(processInput.validatorMap.sync.sweet.error).toBeCalled();
+            expect(processInput.validatorMap.name[1].check).toBeCalled();
+            expect(processInput.validatorMap.name[1].check).toBeCalled();
 
-            expect(processInput.validatorMap.sync.even.check).toBeCalled();
-            expect(processInput.validatorMap.sync.even.error).toBeCalled();
+            expect(processInput.validatorMap.amount[1].check).toBeCalled();
+            expect(processInput.validatorMap.amount[1].error).toBeCalled();
         })
     })
 
     describe("external errors are handled gracefully", () => {
-        const action = {
-            type: "DONATE",
-            username: "franklin",
-            donation: 5001,
-        };
+        const action = donate('salty', 5037);
 
-        const validatorKeyMap = {
-            username: ["confusedCheck", "confusedError", "longerThanTen", "sweet"],
-            donation: ["confusedCheck", "reasonable", "even"]
+
+        const validatorMap: types.SyncValidatorMap<State, Donation> = {
+            name: [confusedCheck, confusedError, sweet],
+            amount: [confusedCheck, reasonable, even],
         };
 
         const baseProcessInput = {
             action,
             state,
-            validatorKeyMap,
             validatorMap,
         };
 
@@ -278,7 +246,7 @@ describe("syncProcess", () => {
         }
 
         test("binary process fails when an external error occurs", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -287,31 +255,30 @@ describe("syncProcess", () => {
         })
 
         test("infinite process gather fieldErrors and processErrors", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
 
             expect((syncProcess(processInput))).toEqual({
                 fieldErrors: {
-                    username: [
-                        "username must be at more than 10 characters long, it is currently 8",
-                        "username must be sweet, and franklin does not contain sugar"
+                    name: [
+                        "name must be sweet, and salty does not contain sugar"
                     ],
-                    donation: [
-                        "5001 is not a reasonable donation",
-                        "donation must be even",
+                    amount: [
+                        "5037 is not a reasonable amount",
+                        "amount must be even",
                     ]
                 },
                 processErrors: {
-                    username: [getExternalError(), getExternalError()],
-                    donation: [getExternalError()]
+                    name: [getExternalError(), getExternalError()],
+                    amount: [getExternalError()]
                 }
             });
         })
 
         test("mode=1: processErrors count toward mode error count", () => {
-            const processInput: types.ProcessInput<State> = {
+            const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };
@@ -319,8 +286,8 @@ describe("syncProcess", () => {
             expect(syncProcess(processInput)).toEqual({
                 fieldErrors: {},
                 processErrors: {
-                    username: [getExternalError()],
-                    donation: [getExternalError()]
+                    name: [getExternalError()],
+                    amount: [getExternalError()]
                 }
             })
         });

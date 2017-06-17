@@ -1,7 +1,7 @@
 import 'jest';
 
 import asyncProcess from '../src/internal/asyncProcess';
-import { getCheckInput } from "../src/internal/utils/process";
+import { getValidatorInput } from "../src/internal/utils/process";
 import { processErrorSymbol } from "../src/internal/symbols";
 
 import validatorMap from './example/validatorMap';
