@@ -25,6 +25,7 @@ export function validate<S,A extends types.Action>({
     return Object.assign({}, action, validation);
 }
 
+
 export interface ValidateSyncInput<S, A extends types.Action> {
     action: A;
     validatorMap: types.SyncValidatorMap<S,A>;

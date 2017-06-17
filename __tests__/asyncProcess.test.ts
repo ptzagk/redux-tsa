@@ -4,29 +4,38 @@ import asyncProcess from '../src/internal/asyncProcess';
 import { getValidatorInput } from "../src/internal/utils/process";
 import { processErrorSymbol } from "../src/internal/symbols";
 
-import validatorMap from './example/validatorMap';
 import state, { State } from "./example/state";
+import { login, Login } from "./example/actions";
+import {
+    available,
+    confusedCheck,
+    confusedError,
+    even,
+    longerThanTen,
+    matchesPassword,
+    reasonable,
+    sweet
+} from "./example/syncValidators";
+import { approved, poetic } from "./example/asyncValidators";
 
 import * as types from "../src/types";
 
 describe("asyncProcess", () => {
 
-    describe("greenlights any action given empty validatorKeyMap", () => {
-        const action = {
-            type: "DONATE",
-            async: true,
-            nonsense: "blah blah"
-        };
+    describe("greenlights any action given empty validatorMap", () => {
+
+        const action = login("grape", "lighting", "blah");
+
+        const validatorMap: types.ValidatorMap<State,Login> = {};
 
         const baseProcessInput = {
             action,
             state,
             validatorMap,
-            validatorKeyMap: {}
         };
 
-        test("binary process greenlights any action given empty validatorKeyMap", async () => {
-            const processInput: types.ProcessInput<State> = {
+        test("binary process greenlights any action given empty validatorMap", async () => {
+            const processInput: types.ProcessInput<State,Login> = {
                 ...baseProcessInput,
                 async: true,
                 mode: 0,
@@ -38,8 +47,8 @@ describe("asyncProcess", () => {
 
         })
 
-        test("infinite process greenlights any action given empty validatorKeyMap", async () => {
-            const processInput: types.ProcessInput<State> = {
+        test("infinite process greenlights any action given empty validatorMap", async () => {
+            const processInput: types.ProcessInput<State,Login> = {
                 ...baseProcessInput,
                 async: true,
                 mode: Infinity,
@@ -50,8 +59,8 @@ describe("asyncProcess", () => {
             expect(result).toEqual(true);
         })
 
-        test("mode=1 process greenlights any action given empty validatorKeyMap", async () => {
-            const processInput: types.ProcessInput<State> = {
+        test("mode=1 process greenlights any action given empty validatorMap", async () => {
+            const processInput: types.ProcessInput<State,Login> = {
                 ...baseProcessInput,
                 async: true,
                 mode: 1,
@@ -65,28 +74,23 @@ describe("asyncProcess", () => {
 
     describe("greenlights conforming actions", () => {
         describe("greenlights conforming action using only sync validators", () => {
-            const action = {
-                type: "DONATE",
-                username: "sugarwater10",
-                donation: 500
-            };
+            const action = login("sugarTrain10", "searainlake", "searainlake");
 
-            const validatorKeyMap = {
-                username: ["longerThanTen", "sweet"],
-                donation: ["reasonable", "even"]
+            const validatorMap: types.ValidatorMap<State, Login> = {
+                name: [available, sweet,],
+                password: [longerThanTen],
+                confirm: [matchesPassword],
             };
 
             const baseProcessInput = {
                 action,
                 state,
                 validatorMap,
-                validatorKeyMap
             };
 
             test("binary process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: 0,
                 };
 
@@ -96,9 +100,8 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: Infinity,
                 };
 
@@ -108,9 +111,8 @@ describe("asyncProcess", () => {
             })
 
             test("mode=1 process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: 1,
                 };
 
@@ -121,28 +123,22 @@ describe("asyncProcess", () => {
         })
 
         describe("greenlights conforming action using only async validators", () => {
-            const action = {
-                type: "ADD_NOTE",
-                username: "grape",
-                note: "less is more when more is too much",
-            };
+            const action = login("sugarTrain10", "searainlake", "searainlake");
 
-            const validatorKeyMap = {
-                username: ["available"],
-                note: ["poetic"],
+            const validatorMap: types.ValidatorMap<State, Login> = {
+                name: [approved, poetic],
+                password: [approved],
             };
 
             const baseProcessInput = {
                 action,
                 state,
                 validatorMap,
-                validatorKeyMap
             };
 
             test("binary process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: 0,
                 };
 
@@ -152,9 +148,8 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: Infinity,
                 };
 
@@ -164,9 +159,8 @@ describe("asyncProcess", () => {
             })
 
             test("mode=1 process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: 1,
                 };
 
@@ -177,28 +171,23 @@ describe("asyncProcess", () => {
         })
 
         describe("greenlights conforming action using mixed validators", () => {
-            const action = {
-                type: "ADD_NOTE",
-                username: "sugargrape12",
-                donation: 550,
-            };
+            const action = login("sugarTrain10", "searainlake", "searainlake");
 
-            const validatorKeyMap = {
-                username: ["sweet", "longerThanTen", "available"],
-                donation: ["even", "reasonable", "approved"],
+            const validatorMap: types.ValidatorMap<State, Login> = {
+                name: [available, approved, poetic,  sweet,],
+                password: [approved, longerThanTen],
+                confirm: [matchesPassword],
             };
 
             const baseProcessInput = {
                 action,
                 state,
                 validatorMap,
-                validatorKeyMap,
             };
 
             test("binary process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: 0,
                 };
 
@@ -209,9 +198,8 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: Infinity,
                 };
 
@@ -222,16 +210,14 @@ describe("asyncProcess", () => {
             })
 
             test("mode=1 process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
-                    async: true,
                     mode: 1,
                 };
 
                 const result = await asyncProcess(processInput);
 
                 expect(result).toEqual(true);
-
             })
         })
     })
@@ -239,36 +225,35 @@ describe("asyncProcess", () => {
     describe("flags nonconforming actions", () => {
 
         describe("flags nonconforming actions using only sync validators", () => {
-            const action = {
-                type: "DONATE",
-                username: "john",
-                donation: 5521,
+            const action = login("grape10", "grapelake", "searain");
+
+            const validatorMap: types.ValidatorMap<State, Login> = {
+                name: [available, longerThanTen, sweet,],
+                password: [longerThanTen],
+                confirm: [matchesPassword],
             };
 
-            const validatorKeyMap = {
-                username: ["longerThanTen", "sweet"],
-                donation: ["reasonable", "even"]
-            };
-
-            const usernameErrors = [
-                "username must be sweet, and john does not contain sugar",
-                "username must be at more than 10 characters long, it is currently 4",
-            ];
-
-            const donationErrors = [
-                "donation must be even",
-                "5521 is not a reasonable donation",
+            const nameErrors = [
+                "name must be more than 10 characters long, it is currently 7",
+                "name must be sweet, and grape10 does not contain sugar",
             ]
+
+            const passwordErrors = [
+                "password must be more than 10 characters long, it is currently 9"
+            ]
+
+            const confirmErrors = [
+                "confirm must match password",
+            ];
 
             const baseProcessInput = {
                 action,
                 state,
                 validatorMap,
-                validatorKeyMap
             };
 
             test("binary process flags nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 0,
                 };
@@ -279,118 +264,52 @@ describe("asyncProcess", () => {
             })
 
             test("infinite process flags all the faults in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: Infinity,
                 };
 
                 const result = await asyncProcess(processInput) as types.ErrorMaps;
 
-                expect(result.fieldErrors.username).toContain(usernameErrors[0]);
-                expect(result.fieldErrors.username).toContain(usernameErrors[1]);
-                expect(result.fieldErrors.donation).toContain(donationErrors[0]);
-                expect(result.fieldErrors.donation).toContain(donationErrors[1]);
+                expect(result.fieldErrors.name).toContain(nameErrors[0]);
+                expect(result.fieldErrors.name).toContain(nameErrors[1]);
+                expect(result.fieldErrors.password).toContain(passwordErrors[0]);
+                expect(result.fieldErrors.confirm).toContain(confirmErrors[0]);
             })
 
             test("mode=1 process flags at most one fault per field in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 1,
                 };
 
                 const result = await asyncProcess(processInput) as types.ErrorMaps;
 
-                expect(result.fieldErrors.username).toHaveLength(1);
-                expect(usernameErrors).toContain(result.fieldErrors.username[0]);
+                expect(result.fieldErrors.name).toHaveLength(1);
+                expect(nameErrors).toContain(result.fieldErrors.name[0]);
 
-                expect(result.fieldErrors.donation).toHaveLength(1);
-                expect(donationErrors).toContain(result.fieldErrors.donation[0]);
+                expect(result.fieldErrors.password).toHaveLength(1);
+                expect(passwordErrors).toContain(result.fieldErrors.password[0]);
+
+                expect(result.fieldErrors.confirm).toHaveLength(1);
+                expect(confirmErrors).toContain(result.fieldErrors.confirm[0]);
             })
         })
 
         describe("flags nonconforming actions using only async validators", () => {
-            const action = {
-                type: "ADD_NOTE",
-                username: "john",
-                note: "more is chicken",
+            const action = login("grape10", "grapelake", "searain");
+
+            const validatorMap: types.ValidatorMap<State, Login> = {
+                name: [approved, poetic,],
+                password: [approved],
             };
 
-            const validatorKeyMap = {
-                username: ["available"],
-                note: ["poetic"],
-            };
-
-            const usernameErrors = ["john is unavailable"];
-
-            const noteErrors = ["note must be poetic: more is chicken is not poetic. less is more when more is too much is poetic"];
-
-            const baseProcessInput = {
-                action,
-                state,
-                validatorMap,
-                validatorKeyMap
-            };
-
-            test("binary process flags nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
-                    ...baseProcessInput,
-                    mode: 0,
-                };
-
-                const result = await asyncProcess(processInput);
-
-                expect(result).toBe(false);
-            })
-
-            test("infinite process flags all the faults in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
-                    ...baseProcessInput,
-                    mode: Infinity,
-                };
-
-                const result = await asyncProcess(processInput) as types.ErrorMaps;
-
-                expect(result.fieldErrors.username).toContain(usernameErrors[0]);
-                expect(result.fieldErrors.note).toContain(noteErrors[0]);
-            });
-
-            test("mode=1 process flags at most one fault per field in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
-                    ...baseProcessInput,
-                    mode: Infinity,
-                };
-
-                const result = await asyncProcess(processInput) as types.ErrorMaps;
-
-                expect(result.fieldErrors.username).toHaveLength(1);
-                expect(result.fieldErrors.username).toContain(usernameErrors[0]);
-
-                expect(result.fieldErrors.note).toHaveLength(1);
-                expect(result.fieldErrors.note).toContain(noteErrors[0]);
-            });
-        })
-
-        describe("flags nonconforming actions using mixed validators", async () => {
-            const action = {
-                type: "ADD_NOTE",
-                username: "john",
-                donation: 5521,
-            };
-
-            const validatorKeyMap = {
-                username: ["sweet", "longerThanTen", "available"],
-                donation: ["even", "reasonable", "approved"],
-            };
-
-            const usernameErrors = [
-                "username must be sweet, and john does not contain sugar",
-                "username must be at more than 10 characters long, it is currently 4",
-                "john is unavailable"
+            const nameErrors = [
+                "the authority declines the transaction",
+                "name must be poetic: grape10 is not poetic",
             ];
 
-            const donationErrors = [
-                "donation must be even",
-                "5521 is not a reasonable donation",
+            const passwordErrors = [
                 "the authority declines the transaction"
             ]
 
@@ -398,11 +317,10 @@ describe("asyncProcess", () => {
                 action,
                 state,
                 validatorMap,
-                validatorKeyMap,
             };
 
             test("binary process flags nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 0,
                 };
@@ -413,36 +331,111 @@ describe("asyncProcess", () => {
             })
 
             test("infinite process flags all the faults in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: Infinity,
                 };
 
-                const result = await asyncProcess(processInput);
+                const result = await asyncProcess(processInput) as types.ErrorMaps;
 
-                expect(result).toEqual({
-                    fieldErrors: {
-                        username: usernameErrors,
-                        donation: donationErrors,
-                    },
-                    processErrors: {}
-                });
+                expect(result.fieldErrors.name).toContain(nameErrors[0]);
+                expect(result.fieldErrors.name).toContain(nameErrors[1]);
+                expect(result.fieldErrors.password).toContain(passwordErrors[0]);
             });
 
             test("mode=1 process flags at most one fault per field in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State> = {
+                const processInput: types.ProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 1,
                 };
 
                 const result = await asyncProcess(processInput) as types.ErrorMaps;
 
-                expect(result.fieldErrors.username).toHaveLength(1);
-                expect(usernameErrors).toContain(result.fieldErrors.username[0]);
+                expect(result.fieldErrors.name).toHaveLength(1);
+                expect(result.fieldErrors.name).toContain(nameErrors[0]);
 
-                expect(result.fieldErrors.donation).toHaveLength(1);
-                expect(donationErrors).toContain(result.fieldErrors.donation[0]);
+                expect(result.fieldErrors.password).toHaveLength(1);
+                expect(result.fieldErrors.password).toContain(passwordErrors[0]);
             });
         })
+    })
+
+    describe("flags nonconforming actions using mixed validators", async () => {
+        const action = login("grape10", "grapelake", "searain");
+
+        const validatorMap: types.ValidatorMap<State, Login> = {
+            name: [available, approved, poetic,  sweet,],
+            password: [approved, longerThanTen],
+            confirm: [matchesPassword],
+        };
+
+        const nameErrors = [
+            "the authority declines the transaction",
+            "name must be poetic: grape10 is not poetic",
+            "name must be sweet, and grape10 does not contain sugar",
+        ];
+
+        const passwordErrors = [
+            "the authority declines the transaction",
+            "password must be more than 10 characters long, it is currently 9",
+        ];
+
+        const confirmErrors = [
+            "confirm must match password",
+        ];
+
+        const baseProcessInput = {
+            action,
+            state,
+            validatorMap,
+        };
+
+        test("binary process flags nonconforming action", async () => {
+            const processInput: types.ProcessInput<State, Login> = {
+                ...baseProcessInput,
+                mode: 0,
+            };
+
+            const result = await asyncProcess(processInput);
+            expect(result).toBe(false);
+        })
+
+        test("infinite process flags all the faults in a nonconforming action", async () => {
+            const processInput: types.ProcessInput<State, Login> = {
+                ...baseProcessInput,
+                mode: Infinity,
+            };
+            const result = await asyncProcess(processInput) as types.ErrorMaps;
+
+            expect(result.fieldErrors.name).toHaveLength(3);
+            expect(result.fieldErrors.name).toContain(nameErrors[0]);
+            expect(result.fieldErrors.name).toContain(nameErrors[1]);
+            expect(result.fieldErrors.name).toContain(nameErrors[2]);
+
+            expect(result.fieldErrors.password).toHaveLength(2);
+            expect(result.fieldErrors.password).toContain(passwordErrors[0]);
+            expect(result.fieldErrors.password).toContain(passwordErrors[1]);
+
+            expect(result.fieldErrors.confirm).toHaveLength(1);
+            expect(result.fieldErrors.confirm).toContain(confirmErrors[0]);
+        })
+
+        test("mode=1 process flags at most one fault per field in a nonconforming action", async () => {
+            const processInput: types.ProcessInput<State, Login> = {
+                ...baseProcessInput,
+                mode: 1,
+            };
+
+            const result = await asyncProcess(processInput) as types.ErrorMaps;
+
+            expect(result.fieldErrors.name).toHaveLength(1);
+            expect(nameErrors).toContain(result.fieldErrors.name[0]);
+
+            expect(result.fieldErrors.password).toHaveLength(1);
+            expect(passwordErrors).toContain(result.fieldErrors.password[0]);
+
+            expect(result.fieldErrors.confirm).toHaveLength(1);
+            expect(confirmErrors).toContain(result.fieldErrors.confirm[0]);
+        });
     })
 })

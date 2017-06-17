@@ -31,7 +31,7 @@ describe("syncProcess", () => {
             validatorMap
         };
 
-        test("binary process greenlights any action given empty validatorKeyMap", () => {
+        test("binary process greenlights any action given empty validatorMap", () => {
             const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
@@ -40,7 +40,7 @@ describe("syncProcess", () => {
             expect(syncProcess(processInput)).toBe(true);
         })
 
-        test("infinite process greenlights any action given empty validatorKeyMap", () => {
+        test("infinite process greenlights any action given empty validatorMap", () => {
             const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
@@ -49,7 +49,7 @@ describe("syncProcess", () => {
             expect(syncProcess(processInput)).toBe(true);
         })
 
-        test("mode=1 process greenlights any action given empty validatorKeyMap", () => {
+        test("mode=1 process greenlights any action given empty validatorMap", () => {
             const processInput: types.ProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
