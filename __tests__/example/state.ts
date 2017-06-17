@@ -1,12 +1,9 @@
 export interface State {
-    notes: string[];
-    amounts: number[];
-    [key: string]: any;
+    users: string[];
 }
 
 const state: State = {
-    notes: ["less is more when more is too much"],
-    amounts: []
+    users: ["grape", "kiwi"],
 };
 
 export default state;

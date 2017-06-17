@@ -5,10 +5,18 @@ import * as types from "../../src/types";
 import { State } from "./state";
 import { Donation, Login } from "./actions";
 
+// export const available: types.SyncValidator<State, Login, 'name'> = {
+//     check({ field, state }) {
+//         return !find(state.users, user => user === field);
+//     },
+//     error({ field }) {
+//           return `${field} is unavailable`;
+//     },
+// };
 
 export const reasonable: types.SyncValidator<State, Donation, 'amount'> = {
     check({ field }) {
-      return field > 1000;
+      return field < 1000;
   },
   error({ fieldKey, field }) {
     return `${field} is not a reasonable ${fieldKey}`;
@@ -33,14 +41,14 @@ export const longerThanTen: types.SyncValidator<State, Login, 'name' | 'password
      }
  }
 
-export const sweet: types.SyncValidator<State, Login, 'name' | 'password'> = {
+export const sweet: types.SyncValidator<State, Login | Donation, 'name'> = {
     check({ field }) {
         return field.includes("sugar");
     },
     error({ fieldKey, field }) {
         return `${fieldKey} must be sweet, and ${field} does not contain sugar`
     }
-}
+};
 
 export const confusedError: types.SyncValidator<State, types.Action, string> = {
     check() {
@@ -52,11 +60,11 @@ export const confusedError: types.SyncValidator<State, types.Action, string> = {
 }
 
 
-// export const confusedCheck: {
-//       check() {
-//           return `${Symbol("there")}`.length > 10;
-//       },
-//       error() {
-//           return "something is wrong"
-//       }
-//   },
+export const confusedCheck: types.SyncValidator<State, types.Action, string> = {
+      check() {
+          return `${Symbol("there")}`.length > 10;
+      },
+      error() {
+          return "something is wrong"
+      },
+};
