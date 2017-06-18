@@ -61,16 +61,19 @@ export interface ErrorWithExternalLabel extends Error {
 
 export type TSAError = ErrorWithExternalLabel | ErrorLike | string;
 
-export interface ErrorMap {
-    [fieldKey: string]: TSAError[];
-}
+export type ErrorMap<A extends Redux.Action> = { [K in keyof A]?: TSAError[] };
 
 export interface Failure {
     fieldKey: string;
     error: TSAError;
 }
 
-export type OnError = (type: string, fieldErrors: ErrorMap, processErrors: ErrorMap) => Action;
+export type OnError<A extends Redux.Action> = (
+    action: A,
+    error: boolean,
+    fieldErrors: ErrorMap<A> | null,
+    processErrors: ErrorMap<A> | null,
+) => A;
 
 export interface ProcessInput<S, A extends Redux.Action> {
     action: A;
@@ -79,12 +82,12 @@ export interface ProcessInput<S, A extends Redux.Action> {
     validatorMap: ValidatorMap<S, A>;
 }
 
-export interface ErrorMaps {
-    fieldErrors: ErrorMap;
-    processErrors: ErrorMap;
+export interface ErrorMaps<A extends Redux.Action> {
+    fieldErrors: ErrorMap<A>;
+    processErrors: ErrorMap<A>;
 }
 
-export type ProcessOutput = ErrorMaps | boolean;
+export type ProcessOutput<A extends Redux.Action> = ErrorMaps<A> | boolean;
 
 export type ValidationResult = Failure | boolean;
 

@@ -4,6 +4,7 @@
         "sourceMap": false,
         "declaration": true,
         "noImplicitAny": true,
+        "strictNullChecks": true,
         "noEmitOnError": true,
         "baseUrl": "src",
         "module": "commonjs",

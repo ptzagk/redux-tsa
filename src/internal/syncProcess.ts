@@ -8,12 +8,12 @@ export default function syncProcess<S, A extends types.Action>({
     action,
     validatorMap,
     mode,
-}: types.ProcessInput<S, A>): types.ProcessOutput {
+}: types.ProcessInput<S, A>): types.ProcessOutput<A> {
 
-    function binaryProcess(): types.ProcessOutput {
+    function binaryProcess(): types.ProcessOutput<A> {
         for (const fieldKey of Object.keys(validatorMap)) {
             const validatorInput = getValidatorInput({ action, state, fieldKey });
-            for (const validator of validatorMap[fieldKey]) {
+            for (const validator of validatorMap[fieldKey]!) {
                 try {
                     if (!validator.check(validatorInput)) {
                         return false;
@@ -26,7 +26,7 @@ export default function syncProcess<S, A extends types.Action>({
         return true;
     }
 
-    function normalProcess(): types.ProcessOutput {
+    function normalProcess(): types.ProcessOutput<A> {
             function getResult<S, A extends types.Action, K extends keyof A>(
                 { check, error }: types.Validator<S, A, K>,
                 fieldKey: K,
@@ -64,7 +64,7 @@ export default function syncProcess<S, A extends types.Action>({
                 for (const fieldKey of Object.keys(validatorMap)) {
                     let fieldErrors = 0;
                     const validatorInput = getValidatorInput({ action, state, fieldKey });
-                    for (const validator of validatorMap[fieldKey]) {
+                    for (const validator of validatorMap[fieldKey]!) {
                         if (fieldErrors < mode) {
                             const result = getResult(validator, fieldKey, validatorInput);
                             if (result !== true) {
@@ -80,7 +80,7 @@ export default function syncProcess<S, A extends types.Action>({
                 return failures;
             }
 
-            return ((failures) => failures.length ? buildErrorMaps(failures) : true)(getFailures());
+            return ((failures) => failures.length ? buildErrorMaps<A>(failures) : true)(getFailures());
     }
 
     return (mode === 0) ? binaryProcess() : normalProcess();

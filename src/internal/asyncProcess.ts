@@ -10,17 +10,17 @@ export default function asyncProcess<S, A extends types.Action>({
     action,
     validatorMap,
     mode,
-}: types.ProcessInput<S, A>): Promise<types.ProcessOutput> {
+}: types.ProcessInput<S, A>): Promise<types.ProcessOutput<A>> {
 
     function failure(result: types.ValidationResult): boolean {
         return result !== true;
     }
 
-    function binaryProcess(): Promise<types.ProcessOutput> {
+    function binaryProcess(): Promise<types.ProcessOutput<A>> {
         const results = [];
         for (const fieldKey of Object.keys(validatorMap)) {
             const validatorInput = getValidatorInput({ action, state, fieldKey});
-            for (const validator of validatorMap[fieldKey]) {
+            for (const validator of validatorMap[fieldKey]!) {
                 results.push(Promise.resolve(validator.check(validatorInput)));
             }
         }
@@ -28,7 +28,7 @@ export default function asyncProcess<S, A extends types.Action>({
         return skurt(failure)(1)(results).then((failures) => !failures.length);
     }
 
-    function normalProcess(): Promise<types.ProcessOutput> {
+    function normalProcess(): Promise<types.ProcessOutput<A>> {
 
         function getResult<S, A extends types.Action, K extends keyof A>(
             { check, error }: types.Validator<S, A, K>,
@@ -64,7 +64,7 @@ export default function asyncProcess<S, A extends types.Action>({
             for (const fieldKey of Object.keys(validatorMap)) {
                 const fieldResult: Array<Promise<types.ValidationResult>> = [];
                 const validatorInput = getValidatorInput({ action, state, fieldKey});
-                for (const validator of validatorMap[fieldKey]) {
+                for (const validator of validatorMap[fieldKey]!) {
                     const result = getResult(validator, fieldKey, validatorInput);
                     fieldResult.push(result);
                 }
@@ -78,7 +78,7 @@ export default function asyncProcess<S, A extends types.Action>({
             .then(flatten)
             .then((failures) => {
                 if (failures.length) {
-                    return buildErrorMaps(failures);
+                    return buildErrorMaps<A>(failures);
                 } else {
                     return true;
                 }

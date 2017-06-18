@@ -267,7 +267,7 @@ describe("asyncProcess", () => {
                     mode: Infinity,
                 };
 
-                const result = await asyncProcess(processInput) as types.ErrorMaps;
+                const result = await asyncProcess(processInput) as types.ErrorMaps<Login>;
 
                 expect(result.fieldErrors.name).toContain(nameErrors[0]);
                 expect(result.fieldErrors.name).toContain(nameErrors[1]);
@@ -281,16 +281,16 @@ describe("asyncProcess", () => {
                     mode: 1,
                 };
 
-                const result = await asyncProcess(processInput) as types.ErrorMaps;
+                const result = await asyncProcess(processInput) as types.ErrorMaps<Login>;
 
                 expect(result.fieldErrors.name).toHaveLength(1);
-                expect(nameErrors).toContain(result.fieldErrors.name[0]);
+                expect(nameErrors).toContain(result.fieldErrors.name![0]);
 
                 expect(result.fieldErrors.password).toHaveLength(1);
-                expect(passwordErrors).toContain(result.fieldErrors.password[0]);
+                expect(passwordErrors).toContain(result.fieldErrors.password![0]);
 
                 expect(result.fieldErrors.confirm).toHaveLength(1);
-                expect(confirmErrors).toContain(result.fieldErrors.confirm[0]);
+                expect(confirmErrors).toContain(result.fieldErrors.confirm![0]);
             });
         });
 
@@ -334,7 +334,7 @@ describe("asyncProcess", () => {
                     mode: Infinity,
                 };
 
-                const result = await asyncProcess(processInput) as types.ErrorMaps;
+                const result = await asyncProcess(processInput) as types.ErrorMaps<Login>;
 
                 expect(result.fieldErrors.name).toContain(nameErrors[0]);
                 expect(result.fieldErrors.name).toContain(nameErrors[1]);
@@ -347,7 +347,7 @@ describe("asyncProcess", () => {
                     mode: 1,
                 };
 
-                const result = await asyncProcess(processInput) as types.ErrorMaps;
+                const result = await asyncProcess(processInput) as types.ErrorMaps<Login>;
 
                 expect(result.fieldErrors.name).toHaveLength(1);
                 expect(result.fieldErrors.name).toContain(nameErrors[0]);
@@ -403,7 +403,7 @@ describe("asyncProcess", () => {
                 ...baseProcessInput,
                 mode: Infinity,
             };
-            const result = await asyncProcess(processInput) as types.ErrorMaps;
+            const result = await asyncProcess(processInput) as types.ErrorMaps<Login>;
 
             expect(result.fieldErrors.name).toHaveLength(3);
             expect(result.fieldErrors.name).toContain(nameErrors[0]);
@@ -424,16 +424,16 @@ describe("asyncProcess", () => {
                 mode: 1,
             };
 
-            const result = await asyncProcess(processInput) as types.ErrorMaps;
+            const result = await asyncProcess(processInput) as types.ErrorMaps<Login>;
 
             expect(result.fieldErrors.name).toHaveLength(1);
-            expect(nameErrors).toContain(result.fieldErrors.name[0]);
+            expect(nameErrors).toContain(result.fieldErrors.name![0]);
 
             expect(result.fieldErrors.password).toHaveLength(1);
-            expect(passwordErrors).toContain(result.fieldErrors.password[0]);
+            expect(passwordErrors).toContain(result.fieldErrors.password![0]);
 
             expect(result.fieldErrors.confirm).toHaveLength(1);
-            expect(confirmErrors).toContain(result.fieldErrors.confirm[0]);
+            expect(confirmErrors).toContain(result.fieldErrors.confirm![0]);
         });
     });
 });

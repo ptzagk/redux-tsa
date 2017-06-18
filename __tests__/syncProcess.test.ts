@@ -180,11 +180,11 @@ describe("syncProcess", () => {
 
             syncProcess(processInput);
 
-            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
-            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
+            expect(processInput.validatorMap.name![1].check).not.toBeCalled();
+            expect(processInput.validatorMap.name![1].check).not.toBeCalled();
 
-            expect(processInput.validatorMap.amount[1].check).not.toBeCalled();
-            expect(processInput.validatorMap.amount[1].error).not.toBeCalled();
+            expect(processInput.validatorMap.amount![1].check).not.toBeCalled();
+            expect(processInput.validatorMap.amount![1].error).not.toBeCalled();
         });
 
         test("mode=1 process is lazy", () => {
@@ -195,11 +195,11 @@ describe("syncProcess", () => {
 
             syncProcess(processInput);
 
-            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
-            expect(processInput.validatorMap.name[1].check).not.toBeCalled();
+            expect(processInput.validatorMap.name![1].check).not.toBeCalled();
+            expect(processInput.validatorMap.name![1].check).not.toBeCalled();
 
-            expect(processInput.validatorMap.amount[1].check).not.toBeCalled();
-            expect(processInput.validatorMap.amount[1].error).not.toBeCalled();
+            expect(processInput.validatorMap.amount![1].check).not.toBeCalled();
+            expect(processInput.validatorMap.amount![1].error).not.toBeCalled();
         });
 
         test("infinite process is eager", () => {
@@ -210,11 +210,11 @@ describe("syncProcess", () => {
 
             syncProcess(processInput);
 
-            expect(processInput.validatorMap.name[1].check).toBeCalled();
-            expect(processInput.validatorMap.name[1].check).toBeCalled();
+            expect(processInput.validatorMap.name![1].check).toBeCalled();
+            expect(processInput.validatorMap.name![1].check).toBeCalled();
 
-            expect(processInput.validatorMap.amount[1].check).toBeCalled();
-            expect(processInput.validatorMap.amount[1].error).toBeCalled();
+            expect(processInput.validatorMap.amount![1].check).toBeCalled();
+            expect(processInput.validatorMap.amount![1].error).toBeCalled();
         });
     });
 

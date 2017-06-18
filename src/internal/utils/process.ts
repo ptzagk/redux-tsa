@@ -19,32 +19,32 @@ export function getValidatorInput<S, A extends types.Action, K extends keyof A>(
     };
 }
 
-interface UpdateErrorMapsInput extends types.ErrorMaps {
+interface UpdateErrorMapsInput<A extends types.Action> extends types.ErrorMaps<A> {
     fieldKey: string;
     error: types.TSAError;
 }
 
-export function buildErrorMaps(failures: types.Failure[]): types.ErrorMaps {
-    const fieldErrors: types.ErrorMap = {};
-    const processErrors: types.ErrorMap = {};
+export function buildErrorMaps<A extends types.Action>(failures: types.Failure[]): types.ErrorMaps<A> {
+    const fieldErrors: types.ErrorMap<A> = {};
+    const processErrors: types.ErrorMap<A> = {};
 
     function updateErrorMaps({
         fieldKey,
         error,
         fieldErrors: currentFieldErrors,
         processErrors: currentProcessErrors,
-    }: UpdateErrorMapsInput ): void {
+    }: UpdateErrorMapsInput<A> ): void {
         if (typeof error !== "string" && error[processErrorSymbol]) {
-            if (currentProcessErrors[fieldKey]) {
-                currentProcessErrors[fieldKey].push(error);
+            if (currentProcessErrors![fieldKey]) {
+                currentProcessErrors![fieldKey]!.push(error);
             } else {
-                currentProcessErrors[fieldKey] = [ error ];
+                currentProcessErrors![fieldKey] = [ error ];
             }
         } else {
-            if (currentFieldErrors[fieldKey]) {
-                currentFieldErrors[fieldKey].push(error);
+            if (currentFieldErrors![fieldKey]) {
+                currentFieldErrors![fieldKey]!.push(error);
             } else {
-                currentFieldErrors[fieldKey] = [ error ];
+                currentFieldErrors![fieldKey] = [ error ];
             }
         }
     }

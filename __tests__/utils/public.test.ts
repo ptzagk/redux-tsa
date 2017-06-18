@@ -1,5 +1,5 @@
 import { asyncSymbol, modeSymbol, validatorMapSymbol } from "../../src/internal/symbols";
-import { generateErrorType, validate, validateSync } from "../../src/internal/utils/public";
+import { validate, validateSync } from "../../src/internal/utils/public";
 
 import { donate, Donation, login, Login } from "../example/actions";
 import { approved, poetic } from "../example/asyncValidators";
@@ -13,13 +13,6 @@ import {
 import * as types from "types";
 
 describe("public utils", () => {
-
-    describe("generateErrorType", () => {
-
-        test("generates error type", () => {
-            expect(generateErrorType("ADD_NOTE")).toBe("@@redux-tsa/ADD_NOTE_ERROR");
-        });
-    });
 
     describe("validate", () => {
         const action = login("sugarTrain10", "searainlake", "searainlake");

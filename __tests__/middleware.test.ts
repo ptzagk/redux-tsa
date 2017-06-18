@@ -1,8 +1,8 @@
 import "jest";
 import * as Redux from "redux";
 
-import createReduxTSAMiddleware from "../src/internal/middleware";
-import { generateErrorType, validate, validateSync } from "../src/internal/utils/public";
+import reduxTSA from "../src/internal/middleware";
+import { validate, validateSync } from "../src/internal/utils/public";
 
 import { donate, Donation, login, Login } from "./example/actions";
 import { approved, poetic } from "./example/asyncValidators";
@@ -19,27 +19,14 @@ describe("createReduxTSAMiddleware", () => {
         };
     }
 
-    function onError(type: any, fieldErrors: types.ErrorMap, processErrors: types.ErrorMap) {
-        return {
-            type,
-            errors: fieldErrors,
-        };
-    }
-
-    const middleware = createReduxTSAMiddleware();
-
-    const middlewareWithCustomOnError = createReduxTSAMiddleware(onError);
-
-    describe("non-validation actions", () => {
-        test("passes an action without a validatorKeyMap to the next", () => {
+    describe("non-validated actions", () => {
+        test("passes a non-validated action to next", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "LOGIN_SUCCESS",
-            };
+            const action = { type: "LOGIN_SUCCESS" };
 
-            middleware(store)(next)(action);
+            reduxTSA(store)(next)(action);
 
             expect(next).toHaveBeenCalledWith(action);
         });
@@ -60,22 +47,9 @@ describe("createReduxTSAMiddleware", () => {
 
             const validatedAction = validateSync({ action, validatorMap });
 
-            middleware(store)(next)(validatedAction);
+            reduxTSA(store)(next)(validatedAction);
 
             expect(next).toHaveBeenCalledWith(action);
-        });
-
-        test("an action that fails sync validation is not passed to next", () => {
-            const store = getStore();
-            const next = jest.fn();
-
-            const action = donate("salty", 5037);
-
-            const validatedAction = validateSync({ action, validatorMap });
-
-            middleware(store)(next)(validatedAction);
-
-            expect(next).not.toHaveBeenCalled();
         });
 
         test("when an action fails sync validation, an error action is dispatched", () => {
@@ -86,24 +60,27 @@ describe("createReduxTSAMiddleware", () => {
 
             const validatedAction = validateSync({ action, validatorMap });
 
-            middleware(store)(next)(validatedAction);
+            reduxTSA(store)(next)(validatedAction);
 
-            expect(store.dispatch).toHaveBeenCalledWith({
-                type: generateErrorType("DONATE"),
-                fieldErrors: {
-                    amount: [
-                        "5037 is not a reasonable amount",
-                        "amount must be even",
-                    ],
-                    name: [
-                        "name must be sweet, and salty does not contain sugar",
-                    ],
+            expect(next).toHaveBeenCalledWith({
+                type: "DONATE",
+                error: true,
+                payload: {
+                    fieldErrors: {
+                        amount: [
+                            "5037 is not a reasonable amount",
+                            "amount must be even",
+                        ],
+                        name: [
+                            "name must be sweet, and salty does not contain sugar",
+                        ],
+                    },
+                    processErrors: {},
                 },
-                processErrors: {},
             });
         });
 
-        test("onError is called with fieldErrors=null and processErrors=null when a binary process fails", () => {
+        test("fieldErrors=null and processErrors=null when a binary process fails", () => {
             const store = getStore();
             const next = jest.fn();
 
@@ -111,35 +88,14 @@ describe("createReduxTSAMiddleware", () => {
 
             const validatedAction = validateSync({ action, validatorMap, mode: 0 });
 
-            middleware(store)(next)(validatedAction);
+            reduxTSA(store)(next)(validatedAction);
 
-            expect(store.dispatch).toHaveBeenCalledWith({
-                type: generateErrorType("DONATE"),
-                fieldErrors: null,
-                processErrors: null,
-            });
-        });
-
-        test("custom onError is called when provided", () => {
-            const store = getStore();
-            const next = jest.fn();
-
-            const action = donate("salty", 5037);
-
-            const validatedAction = validateSync({ action, validatorMap });
-
-            middlewareWithCustomOnError(store)(next)(validatedAction);
-
-            expect(store.dispatch).toHaveBeenCalledWith({
-                type: generateErrorType("DONATE"),
-                errors: {
-                    name: [
-                        "name must be sweet, and salty does not contain sugar",
-                    ],
-                    amount: [
-                        "5037 is not a reasonable amount",
-                        "amount must be even",
-                    ],
+            expect(next).toHaveBeenCalledWith({
+                type: "DONATE",
+                error: true,
+                payload: {
+                    fieldErrors: null,
+                    processErrors: null,
                 },
             });
         });
@@ -160,12 +116,12 @@ describe("createReduxTSAMiddleware", () => {
 
             const validatedAction = validate({ action, validatorMap });
 
-            await middleware(store)(next)(validatedAction);
+            await reduxTSA(store)(next)(validatedAction);
 
             expect(next).toHaveBeenCalled();
         });
 
-        test("an action that fails async validation is not passed to next", async () => {
+        test("when an action fails async validation, an error action is passsed to next", async () => {
             const store = getStore();
             const next = jest.fn();
 
@@ -173,22 +129,57 @@ describe("createReduxTSAMiddleware", () => {
 
             const validatedAction = validate({ action, validatorMap });
 
-            await middleware(store)(next)(validatedAction);
+            await reduxTSA(store)(next)(validatedAction);
 
-            expect(next).not.toHaveBeenCalled();
-        });
-
-        test("when an action fails async validation, an error action is dispatched", async () => {
-            const store = getStore();
-            const next = jest.fn();
-
-            const action = login("grape10", "grapelake", "searain");
-
-            const validatedAction = validate({ action, validatorMap });
-
-            await middleware(store)(next)(validatedAction);
-
-            expect(store.dispatch).toHaveBeenCalled();
+            expect(next).toHaveBeenCalled();
         });
     });
 });
+
+// test("custom onError is called when provided", () => {
+//     const store = getStore();
+//     const next = jest.fn();
+//
+//     const action = donate("salty", 5037);
+//
+//     const validatedAction = validateSync({ action, validatorMap });
+//
+//     reduxTSAWithCustomOnError(store)(next)(validatedAction);
+//
+//     expect(store.dispatch).toHaveBeenCalledWith({
+//         type: generateErrorType("DONATE"),
+//         errors: {
+//             name: [
+//                 "name must be sweet, and salty does not contain sugar",
+//             ],
+//             amount: [
+//                 "5037 is not a reasonable amount",
+//                 "amount must be even",
+//             ],
+//         },
+//     });
+// });
+// test("an action that fails sync validation is not passed to next", () => {
+//     const store = getStore();
+//     const next = jest.fn();
+//
+//     const action = donate("salty", 5037);
+//
+//     const validatedAction = validateSync({ action, validatorMap });
+//
+//     reduxTSA(store)(next)(validatedAction);
+//
+//     expect(next).not.toHaveBeenCalled();
+// });
+// test("an action that fails async validation is not passed to next", async () => {
+//     const store = getStore();
+//     const next = jest.fn();
+//
+//     const action = login("grape10", "grapelake", "searain");
+//
+//     const validatedAction = validate({ action, validatorMap });
+//
+//     await reduxTSA(store)(next)(validatedAction);
+//
+//     expect(next).not.toHaveBeenCalled();
+// });
