@@ -8,6 +8,7 @@
     "lint": "tslint --type-check -c tslint.json --project tsconfig.json ",
     "test": "jest",
     "cov": "jest --coverage",
+    "postcov": "codecov -f coverage/*.json",
     "sandbox": "jest utils/public.test.ts"
   },
   "author": "Mateusz Okon <teuszokon@gmail.com> (http://mateuszokon.com/)",

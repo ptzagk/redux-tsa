@@ -7,7 +7,7 @@ import { generateErrorType } from "./utils/public";
 
 import * as types from "../types";
 
-export interface DefaultErrorAction extends Redux.Action {
+export interface ErrorAction extends Redux.Action {
     fieldErrors: types.ErrorMap;
     processErrors: types.ErrorMap;
 }
@@ -16,7 +16,7 @@ export function defaultOnError(
     type: string,
     fieldErrors: types.ErrorMap,
     processErrors: types.ErrorMap,
-): DefaultErrorAction {
+): ErrorAction {
     return { type, fieldErrors, processErrors };
 }
 
