@@ -11,7 +11,7 @@ import { even, reasonable, sweet } from "./example/syncValidators";
 
 import * as types from "../src/types";
 
-describe("createReduxTSAMiddleware", () => {
+describe("middleware", () => {
     function getStore(): Redux.MiddlewareAPI<State> {
         return {
             dispatch: jest.fn(),
@@ -135,51 +135,3 @@ describe("createReduxTSAMiddleware", () => {
         });
     });
 });
-
-// test("custom onError is called when provided", () => {
-//     const store = getStore();
-//     const next = jest.fn();
-//
-//     const action = donate("salty", 5037);
-//
-//     const validatedAction = validateSync({ action, validatorMap });
-//
-//     reduxTSAWithCustomOnError(store)(next)(validatedAction);
-//
-//     expect(store.dispatch).toHaveBeenCalledWith({
-//         type: generateErrorType("DONATE"),
-//         errors: {
-//             name: [
-//                 "name must be sweet, and salty does not contain sugar",
-//             ],
-//             amount: [
-//                 "5037 is not a reasonable amount",
-//                 "amount must be even",
-//             ],
-//         },
-//     });
-// });
-// test("an action that fails sync validation is not passed to next", () => {
-//     const store = getStore();
-//     const next = jest.fn();
-//
-//     const action = donate("salty", 5037);
-//
-//     const validatedAction = validateSync({ action, validatorMap });
-//
-//     reduxTSA(store)(next)(validatedAction);
-//
-//     expect(next).not.toHaveBeenCalled();
-// });
-// test("an action that fails async validation is not passed to next", async () => {
-//     const store = getStore();
-//     const next = jest.fn();
-//
-//     const action = login("grape10", "grapelake", "searain");
-//
-//     const validatedAction = validate({ action, validatorMap });
-//
-//     await reduxTSA(store)(next)(validatedAction);
-//
-//     expect(next).not.toHaveBeenCalled();
-// });

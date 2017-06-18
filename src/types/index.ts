@@ -68,13 +68,6 @@ export interface Failure {
     error: TSAError;
 }
 
-export type OnError<A extends Redux.Action> = (
-    action: A,
-    error: boolean,
-    fieldErrors: ErrorMap<A> | null,
-    processErrors: ErrorMap<A> | null,
-) => A;
-
 export interface ProcessInput<S, A extends Redux.Action> {
     action: A;
     state: S;

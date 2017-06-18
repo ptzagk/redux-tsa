@@ -12,5 +12,5 @@
         "lib": [ "ES6","ES7","DOM"],
         "jsx": "react"
     },
-    "include": [ "src/**/*", "__tests__/**/*"]
+    "include": [ "src/**/*" ]
 }
