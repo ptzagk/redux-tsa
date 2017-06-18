@@ -6,5 +6,5 @@ node_js:
 install:
   - yarn install
 script:
-  - yarn test
+  - yarn testcov
   - yarn postcov
