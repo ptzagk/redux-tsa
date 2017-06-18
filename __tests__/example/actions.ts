@@ -1,6 +1,7 @@
 import * as Redux from "redux";
 
 import { State } from "./state";
+
 import * as types from "../../src/types";
 
 export interface Donation extends Redux.Action {
@@ -27,6 +28,6 @@ export function login(name: string, password: string, confirm: string): Login {
         name,
         confirm,
         password,
-        type: "LOGIN"
+        type: "LOGIN",
     };
 }

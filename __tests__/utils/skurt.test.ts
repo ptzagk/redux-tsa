@@ -11,7 +11,7 @@ describe("skurt", () => {
         Promise.resolve(13),
         Promise.resolve(3945),
         Promise.resolve(100),
-        Promise.resolve(39292929)
+        Promise.resolve(39292929),
     ];
 
     test("number of results", async () => {
@@ -29,8 +29,8 @@ describe("skurt", () => {
 
         expect(noHundreds).toEqual([]);
         expect(oneHundreds).toEqual([100]);
-        expect(twoHundreds).toEqual([100,100]);
-        expect(threeHundreds).toEqual([100,100,100]);
+        expect(twoHundreds).toEqual([100, 100]);
+        expect(threeHundreds).toEqual([100, 100, 100]);
         expect(allHundreds).toEqual([100, 100, 100]);
 
     });
@@ -50,5 +50,5 @@ describe("skurt", () => {
         expect(oneNothing).toEqual([]);
         expect(twoNothing).toEqual([]);
         expect(threeNothing).toEqual([]);
-    })
-})
+    });
+});

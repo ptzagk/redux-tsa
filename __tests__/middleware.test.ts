@@ -1,33 +1,34 @@
 import "jest";
 import * as Redux from "redux";
 
-import configureReduxTSA from "../src/internal/middleware";
-import { generateErrorType, validate } from "../src/internal/utils/public";
-import { asyncSymbol } from "../src/internal/symbols";
+import createReduxTSAMiddleware from "../src/internal/middleware";
+import { generateErrorType, validate, validateSync } from "../src/internal/utils/public";
 
-import validatorMap from "./example/validatorMap";
+import { donate, Donation, login, Login } from "./example/actions";
+import { approved, poetic } from "./example/asyncValidators";
 import state, { State } from "./example/state";
+import { even, reasonable, sweet } from "./example/syncValidators";
 
 import * as types from "../src/types";
 
-describe("configureReduxTSA", () => {
+describe("createReduxTSAMiddleware", () => {
     function getStore(): Redux.MiddlewareAPI<State> {
         return {
+            dispatch: jest.fn(),
             getState: () => state,
-            dispatch: jest.fn()
         };
     }
 
-    function onError(type: any, fieldErrors: types.ErrorMap, processErrors: types.ErrorMap){
+    function onError(type: any, fieldErrors: types.ErrorMap, processErrors: types.ErrorMap) {
         return {
             type,
-            errors: fieldErrors
+            errors: fieldErrors,
         };
     }
 
-    const middleware = configureReduxTSA({ validatorMap });
+    const middleware = createReduxTSAMiddleware();
 
-    const middlewareWithCustomOnError = configureReduxTSA({ validatorMap, onError });
+    const middlewareWithCustomOnError = createReduxTSAMiddleware(onError);
 
     describe("non-validation actions", () => {
         test("passes an action without a validatorKeyMap to the next", () => {
@@ -35,52 +36,44 @@ describe("configureReduxTSA", () => {
             const next = jest.fn();
 
             const action = {
-                type: "LOGIN_SUCCESS"
+                type: "LOGIN_SUCCESS",
             };
 
-            middleware(store)(next)(action)
+            middleware(store)(next)(action);
 
             expect(next).toHaveBeenCalledWith(action);
-        })
-    })
+        });
+    });
 
     describe("sync validation", () => {
 
-        const validatorKeyMap = {
-            username: ["longerThanTen", "sweet"],
-            donation: ["reasonable", "even"]
+        const validatorMap: types.SyncValidatorMap<State, Donation> = {
+            name: [sweet],
+            amount: [reasonable, even],
         };
 
         test("an action that passes sync validation is passed to next", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "DONATE",
-                username: "sugarwater10",
-                donation: 500
-            };
+            const action = donate("sugarTrain10", 650);
 
-            const validatedAction = validate({ action, validatorKeyMap });
+            const validatedAction = validateSync({ action, validatorMap });
 
-            middleware(store)(next)(validatedAction)
+            middleware(store)(next)(validatedAction);
 
-            expect(next).toHaveBeenCalledWith(action)
-        })
+            expect(next).toHaveBeenCalledWith(action);
+        });
 
         test("an action that fails sync validation is not passed to next", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "DONATE",
-                username: "water10",
-                donation: 5001,
-            };
+            const action = donate("salty", 5037);
 
-            const validatedAction = validate({ action, validatorKeyMap });
+            const validatedAction = validateSync({ action, validatorMap });
 
-            middleware(store)(next)(validatedAction)
+            middleware(store)(next)(validatedAction);
 
             expect(next).not.toHaveBeenCalled();
         });
@@ -89,43 +82,34 @@ describe("configureReduxTSA", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "DONATE",
-                username: "water10",
-                donation: 5001,
-            };
+            const action = donate("salty", 5037);
 
-            const validatedAction = validate({ action, validatorKeyMap });
+            const validatedAction = validateSync({ action, validatorMap });
 
-            middleware(store)(next)(validatedAction)
+            middleware(store)(next)(validatedAction);
 
             expect(store.dispatch).toHaveBeenCalledWith({
                 type: generateErrorType("DONATE"),
                 fieldErrors: {
-                    username: [
-                        "username must be at more than 10 characters long, it is currently 7",
-                        "username must be sweet, and water10 does not contain sugar"
+                    amount: [
+                        "5037 is not a reasonable amount",
+                        "amount must be even",
                     ],
-                    donation: [
-                        "5001 is not a reasonable donation",
-                        "donation must be even",
-                    ]
+                    name: [
+                        "name must be sweet, and salty does not contain sugar",
+                    ],
                 },
-                processErrors: {}
-            })
+                processErrors: {},
+            });
         });
 
         test("onError is called with fieldErrors=null and processErrors=null when a binary process fails", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "DONATE",
-                username: "water10",
-                donation: 5001,
-            };
+            const action = donate("salty", 5037);
 
-            const validatedAction = validate({ action, validatorKeyMap, mode: 0 });
+            const validatedAction = validateSync({ action, validatorMap, mode: 0 });
 
             middleware(store)(next)(validatedAction);
 
@@ -133,64 +117,50 @@ describe("configureReduxTSA", () => {
                 type: generateErrorType("DONATE"),
                 fieldErrors: null,
                 processErrors: null,
-            })
-        })
+            });
+        });
 
         test("custom onError is called when provided", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "DONATE",
-                username: "water10",
-                donation: 5001,
-            };
+            const action = donate("salty", 5037);
 
-            const validatedAction = validate({ action, validatorKeyMap });
+            const validatedAction = validateSync({ action, validatorMap });
 
-            middlewareWithCustomOnError(store)(next)(validatedAction)
+            middlewareWithCustomOnError(store)(next)(validatedAction);
 
             expect(store.dispatch).toHaveBeenCalledWith({
                 type: generateErrorType("DONATE"),
                 errors: {
-                    username: [
-                        "username must be at more than 10 characters long, it is currently 7",
-                        "username must be sweet, and water10 does not contain sugar"
+                    name: [
+                        "name must be sweet, and salty does not contain sugar",
                     ],
-                    donation: [
-                        "5001 is not a reasonable donation",
-                        "donation must be even",
-                    ]
+                    amount: [
+                        "5037 is not a reasonable amount",
+                        "amount must be even",
+                    ],
                 },
-            })
-        })
-    })
+            });
+        });
+    });
 
     describe("async validation", () => {
 
-        const validatorKeyMap = {
-            username: ["available"],
-            note: ["poetic"],
+        const validatorMap: types.ValidatorMap<State, Login> = {
+            name: [approved, poetic],
+            password: [approved],
         };
 
         test("an action that passes async validation is passed to next", async () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "ADD_NOTE",
-                username: "grape",
-                note: "less is more when more is too much",
-            };
+            const action = login("sugarTrain10", "searainlake", "searainlake");
 
-            const validatedAction = validate({
-                action,
-                validatorKeyMap,
-                mode: 1,
-                async: true,
-            });
+            const validatedAction = validate({ action, validatorMap });
 
-            await middleware(store)(next)(validatedAction)
+            await middleware(store)(next)(validatedAction);
 
             expect(next).toHaveBeenCalled();
         });
@@ -199,20 +169,11 @@ describe("configureReduxTSA", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "ADD_NOTE",
-                username: "john",
-                note: "less is chicken",
-            };
+            const action = login("grape10", "grapelake", "searain");
 
-            const validatedAction = validate({
-                action,
-                validatorKeyMap,
-                mode: 1,
-                async: true,
-            });
+            const validatedAction = validate({ action, validatorMap });
 
-            await middleware(store)(next)(validatedAction)
+            await middleware(store)(next)(validatedAction);
 
             expect(next).not.toHaveBeenCalled();
         });
@@ -221,29 +182,13 @@ describe("configureReduxTSA", () => {
             const store = getStore();
             const next = jest.fn();
 
-            const action = {
-                type: "ADD_NOTE",
-                username: "john",
-                note: "more is chicken",
-            };
+            const action = login("grape10", "grapelake", "searain");
 
-            const validatedAction = validate({
-                action,
-                validatorKeyMap,
-                mode: 1,
-                async: true,
-            });
+            const validatedAction = validate({ action, validatorMap });
 
             await middleware(store)(next)(validatedAction);
 
-            expect(store.dispatch).toHaveBeenCalledWith({
-                type: generateErrorType("ADD_NOTE"),
-                fieldErrors: {
-                    username: ["john is unavailable"],
-                    note: ["note must be poetic: more is chicken is not poetic. less is more when more is too much is poetic"],
-                },
-                processErrors: {}
-            });
+            expect(store.dispatch).toHaveBeenCalled();
         });
-    })
-})
+    });
+});

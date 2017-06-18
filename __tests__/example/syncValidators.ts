@@ -1,20 +1,18 @@
-import * as Redux from "redux";
+import { Donation, Login } from "./actions";
+import { State } from "./state";
 
 import * as types from "../../src/types";
 
-import { State } from "./state";
-import { Donation, Login } from "./actions";
-
-export const available: types.SyncValidator<State, Login, 'name'> = {
+export const available: types.SyncValidator<State, Login, "name"> = {
     check({ field, state }) {
-        return !state.users.some(user => user === field);
+        return !state.users.some((user) => user === field);
     },
     error({ field }) {
           return `${field} is unavailable`;
     },
 };
 
-export const reasonable: types.SyncValidator<State, Donation, 'amount'> = {
+export const reasonable: types.SyncValidator<State, Donation, "amount"> = {
     check({ field }) {
       return field < 1000;
   },
@@ -23,30 +21,30 @@ export const reasonable: types.SyncValidator<State, Donation, 'amount'> = {
     },
 };
 
-export const even: types.SyncValidator<State, Donation, 'amount'> = {
+export const even: types.SyncValidator<State, Donation, "amount"> = {
     check({ field }) {
         return Number.isInteger(field / 2);
     },
     error({ fieldKey }) {
         return `${fieldKey} must be even`;
-     }
-}
+    },
+};
 
-export const longerThanTen: types.SyncValidator<State, Login, "name" | 'password'> = {
+export const longerThanTen: types.SyncValidator<State, Login, "name" | "password"> = {
     check({ field }) {
         return field.length > 10;
     },
     error({ fieldKey, field }) {
-        return `${fieldKey} must be more than 10 characters long, it is currently ${field.length}`
-     }
- }
+        return `${fieldKey} must be more than 10 characters long, it is currently ${field.length}`;
+    },
+};
 
-export const sweet: types.SyncValidator<State, Login | Donation, 'name'> = {
+export const sweet: types.SyncValidator<State, Login | Donation, "name"> = {
     check({ field }) {
         return field.includes("sugar");
     },
     error({ fieldKey, field }) {
-        return `${fieldKey} must be sweet, and ${field} does not contain sugar`
+        return `${fieldKey} must be sweet, and ${field} does not contain sugar`;
     },
 };
 
@@ -56,8 +54,8 @@ export const matchesPassword: types.SyncValidator<State, Login, "confirm"> = {
     },
     error({ fieldKey }) {
         return `${fieldKey} must match password`;
-    }
-}
+    },
+};
 
 export const confusedError: types.SyncValidator<State, types.Action, string> = {
     check() {
@@ -66,14 +64,13 @@ export const confusedError: types.SyncValidator<State, types.Action, string> = {
     error() {
         return `${Symbol("there")}`;
     },
-}
-
+};
 
 export const confusedCheck: types.SyncValidator<State, types.Action, string> = {
       check() {
           return `${Symbol("there")}`.length > 10;
       },
       error() {
-          return "something is wrong"
+          return "something is wrong";
       },
 };

@@ -5,16 +5,10 @@
   "main": "webpack.config.js",
   "scripts": {
     "build": "webpack",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "lint": "tslint --type-check -c tslint.json --project tsconfig.json ",
     "test": "jest",
     "cov": "jest --coverage",
-<<<<<<< HEAD
-    "sandbox": "jest asyncProcess.test.ts"
-||||||| merged common ancestors
-    "sandbox": "jest --coverage public.test.ts"
-=======
-    "sandbox": "jest syncProcess.test.ts"
->>>>>>> 4b06406b276157d6b4b93b7c304282b1f4830b2b
+    "sandbox": "jest utils/public.test.ts"
   },
   "author": "Mateusz Okon <teuszokon@gmail.com> (http://mateuszokon.com/)",
   "license": "MIT",

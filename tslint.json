@@ -7,7 +7,9 @@
     "rules": {
         "interface-name": [true, "never-prefix"],
         "only-arrow-functions": false,
-        "one-variable-per-declaration": false
+        "one-variable-per-declaration": false,
+        "no-unused-variable": false,
+        "object-literal-sort-keys": false
     },
     "rulesDirectory": []
 }
