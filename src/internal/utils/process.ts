@@ -9,7 +9,7 @@ export interface GetValidatorInputInput<S, A extends types.Action, K extends key
 }
 
 export function getValidatorInput<S, A extends types.Action, K extends keyof A>(
-    { action, state, fieldKey }: GetValidatorInputInput<S,A,K>
+    { action, state, fieldKey }: GetValidatorInputInput<S, A, K>,
 ): types.ValidatorInput<S, A, K> {
     return {
         action,

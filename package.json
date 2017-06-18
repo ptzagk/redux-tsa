@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "build": "webpack",
-    "lint": "tslint --type-check -c tslint.json --project tsconfig.json ",
+    "lint": "tslint --fix --type-check -c tslint.json --project tsconfig.json",
     "test": "jest",
     "cov": "jest --coverage",
     "postcov": "codecov -f coverage/*.json",

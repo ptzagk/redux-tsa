@@ -16,47 +16,39 @@ export type SyncCheck<
     S,
     A extends Redux.Action,
     K extends keyof A
-> = (input: ValidatorInput<S,A,K>) => boolean;
+> = (input: ValidatorInput<S, A, K>) => boolean;
 
 export type AsyncCheck<
     S,
     A extends Redux.Action,
     K extends keyof A
-> = (input: ValidatorInput<S,A,K>) => Promise<boolean>;
+> = (input: ValidatorInput<S, A, K>) => Promise<boolean>;
 
 export type ProduceError<
     S,
     A extends Redux.Action,
     K extends keyof A
-> = (input: ValidatorInput<S,A,K>) => TSAError;
+> = (input: ValidatorInput<S, A, K>) => TSAError;
 
-export interface SyncValidator<
-    S,
-    A extends Redux.Action,
-    K extends keyof A
-> {
-    check: SyncCheck<S,A,K>;
-    error: ProduceError<S,A,K>;
+export interface SyncValidator<S, A extends Redux.Action, K extends keyof A> {
+    check: SyncCheck<S, A, K>;
+    error: ProduceError<S, A, K>;
 }
 
-export interface AsyncValidator<
-    S,
-    A extends Redux.Action,
-    K extends keyof A
-> {
-    check: AsyncCheck<S,A,K>;
-    error: ProduceError<S,A,K>;
+export interface AsyncValidator<S, A extends Redux.Action, K extends keyof A> {
+    check: AsyncCheck<S, A, K>;
+    error: ProduceError<S, A, K>;
 }
 
-export type Validator<S, A extends Redux.Action, K extends keyof A> = SyncValidator<S,A,K> | AsyncValidator<S,A,K>;
+export type Validator<S, A extends Redux.Action, K extends keyof A> = SyncValidator<S, A, K> | AsyncValidator<S, A, K>;
 
 export type SyncValidatorMap<S, A extends Redux.Action> = {
-    [K in keyof A]?: SyncValidator<S,A,K>[]
-}
+    [K in keyof A]?: Array<SyncValidator<S, A, K>>;
+};
 
 export type ValidatorMap<S, A extends Redux.Action> = {
-    [K in keyof A]?: Validator<S,A,K>[]
-}
+    [K in keyof A]?: Array<Validator<S, A, K>>;
+};
 
 export interface ErrorLike {
     message: string;
@@ -84,7 +76,7 @@ export interface ProcessInput<S, A extends Redux.Action> {
     action: A;
     state: S;
     mode: number;
-    validatorMap: ValidatorMap<S,A>;
+    validatorMap: ValidatorMap<S, A>;
 }
 
 export interface ErrorMaps {

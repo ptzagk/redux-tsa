@@ -21,7 +21,7 @@ export function defaultOnError(
 }
 
 export default function configureReduxTSA(
-    onError: types.OnError = defaultOnError
+    onError: types.OnError = defaultOnError,
 ): Redux.Middleware {
 
     function generateErrorAction(
@@ -60,11 +60,11 @@ export default function configureReduxTSA(
         }
 
         if (action[validatorMapSymbol]) {
-            const processInput: types.ProcessInput<S,A> = {
+            const processInput: types.ProcessInput<S, A> = {
                 action,
                 mode: action[modeSymbol] as number,
                 state: store.getState(),
-                validatorMap: action[validatorMapSymbol] as types.ValidatorMap<S,A>,
+                validatorMap: action[validatorMapSymbol] as types.ValidatorMap<S, A>,
             };
 
             if (action[asyncSymbol]) {

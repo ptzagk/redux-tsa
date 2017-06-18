@@ -8,7 +8,7 @@ export default function syncProcess<S, A extends types.Action>({
     action,
     validatorMap,
     mode,
-}: types.ProcessInput<S,A>): types.ProcessOutput {
+}: types.ProcessInput<S, A>): types.ProcessOutput {
 
     function binaryProcess(): types.ProcessOutput {
         for (const fieldKey of Object.keys(validatorMap)) {
@@ -18,7 +18,7 @@ export default function syncProcess<S, A extends types.Action>({
                     if (!validator.check(validatorInput)) {
                         return false;
                     }
-                } catch(e) {
+                } catch (e) {
                     return false;
                 }
             }
@@ -30,19 +30,19 @@ export default function syncProcess<S, A extends types.Action>({
             function getResult<S, A extends types.Action, K extends keyof A>(
                 { check, error }: types.Validator<S, A, K>,
                 fieldKey: K,
-                validatorInput: types.ValidatorInput<S,A,K>,
+                validatorInput: types.ValidatorInput<S, A, K>,
             ): types.ValidationResult {
                 let checkOutput, producedError;
                 try {
                     checkOutput = check(validatorInput);
-                } catch(e) {
+                } catch (e) {
                     e[processErrorSymbol] = true;
                     producedError = e;
                 }
                 if (!producedError && !checkOutput) {
                     try {
                         producedError = error(validatorInput);
-                    } catch(e) {
+                    } catch (e) {
                         e[processErrorSymbol] = true;
                         producedError = e;
                     }
