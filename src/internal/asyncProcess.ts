@@ -17,11 +17,25 @@ export default function asyncProcess<S, A extends types.Action>({
     }
 
     function binaryProcess(): Promise<types.ProcessOutput<A>> {
+
+        function getResult<S, A extends types.Action, K extends keyof A>(
+            validator: types.Validator<S, A, K>,
+            fieldKey: K,
+            validatorInput: types.ValidatorInput<S, A, K>,
+        ): Promise<types.ValidationResult> {
+            return new Promise((resolve) => {
+                resolve(validator.check(validatorInput))
+            })
+            .catch((externalError) => {
+                return false;
+            });
+        }
+
         const results = [];
         for (const fieldKey of Object.keys(validatorMap)) {
             const validatorInput = getValidatorInput({ action, state, fieldKey});
             for (const validator of validatorMap[fieldKey]!) {
-                results.push(Promise.resolve(validator.check(validatorInput)));
+                results.push(getResult(validator, fieldKey, validatorInput));
             }
         }
 
@@ -32,7 +46,7 @@ export default function asyncProcess<S, A extends types.Action>({
 
         function getResult<S, A extends types.Action, K extends keyof A>(
             { check, error }: types.Validator<S, A, K>,
-            fieldKey: string,
+            fieldKey: K,
             validatorInput: types.ValidatorInput<S, A, K>,
         ): Promise<types.ValidationResult> {
             return new Promise((resolve) => {

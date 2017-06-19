@@ -65,18 +65,16 @@ describe("middleware", () => {
             expect(next).toHaveBeenCalledWith({
                 type: "DONATE",
                 error: true,
-                payload: {
-                    fieldErrors: {
-                        amount: [
-                            "5037 is not a reasonable amount",
-                            "amount must be even",
-                        ],
-                        name: [
-                            "name must be sweet, and salty does not contain sugar",
-                        ],
-                    },
-                    processErrors: {},
+                fieldErrors: {
+                    amount: [
+                        "5037 is not a reasonable amount",
+                        "amount must be even",
+                    ],
+                    name: [
+                        "name must be sweet, and salty does not contain sugar",
+                    ],
                 },
+                processErrors: {},
             });
         });
 
@@ -93,10 +91,8 @@ describe("middleware", () => {
             expect(next).toHaveBeenCalledWith({
                 type: "DONATE",
                 error: true,
-                payload: {
-                    fieldErrors: null,
-                    processErrors: null,
-                },
+                fieldErrors: null,
+                processErrors: null,
             });
         });
     });

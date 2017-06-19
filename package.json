@@ -9,7 +9,7 @@
     "test": "jest",
     "testcov": "jest --coverage",
     "postcov": "codecov -f coverage/*.json",
-    "sandbox": "jest utils/public.test.ts"
+    "sandbox": "jest asyncProcess.test.ts"
   },
   "author": "Mateusz Okon <teuszokon@gmail.com> (http://mateuszokon.com/)",
   "license": "MIT",

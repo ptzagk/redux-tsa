@@ -2,15 +2,11 @@ import * as Redux from "redux";
 
 import * as types from "../../types";
 
-export interface ErrorPayload<A extends Redux.Action> {
-    fieldErrors: types.ErrorMap<A> | null;
-    processErrors: types.ErrorMap<A> | null;
-}
-
 export interface ErrorActionHelp<A extends Redux.Action, T extends keyof A> {
     type: A[T];
     error: boolean;
-    payload: ErrorPayload<A>;
+    fieldErrors: types.ErrorMap<A> | null;
+    processErrors: types.ErrorMap<A> | null;
 }
 
 export type ErrorAction<A extends Redux.Action> = ErrorActionHelp<A, "type">;
@@ -18,23 +14,26 @@ export type ErrorAction<A extends Redux.Action> = ErrorActionHelp<A, "type">;
 export type TSAAction<A extends Redux.Action> = A | ErrorAction<A>;
 
 export function isError<A extends Redux.Action>(action: TSAAction<A>): action is ErrorAction<A> {
-    if ((action as ErrorAction<A>).payload) {
-        if ((action as ErrorAction<A>).payload.fieldErrors) {
-            return (action as ErrorAction<A>).payload.fieldErrors !== undefined;
-        }
-    }
-    return false;
+    return (action as ErrorAction<A>).fieldErrors !== undefined;
 }
 
-export function generateErrorAction<A extends Redux.Action>(
-    action: A,
-    error: boolean,
-    fieldErrors: types.ErrorMap<A> | null,
-    processErrors: types.ErrorMap<A> | null,
-): ErrorAction<A> {
+export interface GenerateErrorActionInput<A extends Redux.Action> {
+    action: A;
+    error: boolean;
+    fieldErrors: types.ErrorMap<A> | null;
+    processErrors: types.ErrorMap<A> | null;
+}
+
+export function generateErrorAction<A extends Redux.Action>({
+    action,
+    error,
+    fieldErrors,
+    processErrors,
+}: GenerateErrorActionInput<A>): ErrorAction<A> {
     return {
         error,
-        payload: { fieldErrors, processErrors },
+        fieldErrors,
+        processErrors,
         type: action.type,
     };
 }

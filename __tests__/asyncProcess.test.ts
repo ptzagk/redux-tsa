@@ -1,7 +1,7 @@
 import "jest";
 
 import asyncProcess from "../src/internal/asyncProcess";
-// import { processErrorSymbol } from "../src/internal/symbols";
+import { processErrorSymbol } from "../src/internal/symbols";
 
 import { login, Login } from "./example/actions";
 import { approved, poetic } from "./example/asyncValidators";
@@ -395,6 +395,7 @@ describe("asyncProcess", () => {
             };
 
             const result = await asyncProcess(processInput);
+
             expect(result).toBe(false);
         });
 
@@ -434,6 +435,75 @@ describe("asyncProcess", () => {
 
             expect(result.fieldErrors.confirm).toHaveLength(1);
             expect(confirmErrors).toContain(result.fieldErrors.confirm![0]);
+        });
+    });
+
+    describe("external errors are handled gracefully", () => {
+        const action = login("sugarTrain10", "searainlake", "searainlake");
+
+        const validatorMap: types.ValidatorMap<State, Login> = {
+            name: [approved, confusedCheck, confusedError, poetic ],
+            password: [confusedCheck, approved],
+        };
+
+        const baseProcessInput = {
+            action,
+            state,
+            validatorMap,
+        };
+
+        function getExternalError() {
+            try {
+                return `${Symbol("whoops")}`;
+            } catch (e) {
+                e[processErrorSymbol] = true;
+                return e;
+            }
+        }
+
+        test("binary process fails when an external error occurs", async () => {
+            const processInput: types.ProcessInput<State, Login> = {
+                ...baseProcessInput,
+                mode: 0,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toBe(false);
+        });
+
+        test("infinite process gather fieldErrors and processErrors", async () => {
+            const processInput: types.ProcessInput<State, Login> = {
+                ...baseProcessInput,
+                mode: Infinity,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual({
+                fieldErrors: {},
+                processErrors: {
+                    name: [getExternalError(), getExternalError()],
+                    password: [getExternalError()],
+                }
+            });
+        });
+
+        test("mode=1: processErrors count toward mode error count", async () => {
+            const processInput: types.ProcessInput<State, Login> = {
+                ...baseProcessInput,
+                mode: 1,
+            };
+
+            const result = await asyncProcess(processInput);
+
+            expect(result).toEqual({
+                fieldErrors: {},
+                processErrors: {
+                    name: [getExternalError()],
+                    password: [getExternalError()],
+                },
+            });
         });
     });
 });
