@@ -30,11 +30,11 @@ export default <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) =
         }
 
         if (action[validatorMapSymbol]) {
-            const processInput: types.ProcessInput<S, A> = {
+            const processInput = {
                 action,
                 mode: action[modeSymbol] as number,
                 state: store.getState(),
-                validatorMap: action[validatorMapSymbol] as types.ValidatorMap<S, A>,
+                validatorMap: action[validatorMapSymbol],
             };
 
             if (action[asyncSymbol]) {

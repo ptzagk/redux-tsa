@@ -1,8 +1,8 @@
 {
   "name": "redux-tsa",
   "version": "0.0.0",
-  "description": "",
-  "main": "webpack.config.js",
+  "description": "Async friendly validation middleware for Redux",
+  "main": "src",
   "scripts": {
     "build": "tsc",
     "lint": "tslint --fix --type-check -c tslint.json --project tsconfig.json",
@@ -46,8 +46,5 @@
       "<rootDir>/src"
     ]
   },
-  "dependencies": {
-    "@types/lodash-es": "^4.14.5",
-    "lodash-es": "^4.17.4"
-  }
+  "dependencies": {}
 }

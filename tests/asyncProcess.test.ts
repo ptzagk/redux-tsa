@@ -32,7 +32,7 @@ describe("asyncProcess", () => {
         };
 
         test("binary process greenlights any action given empty validatorMap", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 async: true,
                 mode: 0,
@@ -45,7 +45,7 @@ describe("asyncProcess", () => {
         });
 
         test("infinite process greenlights any action given empty validatorMap", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 async: true,
                 mode: Infinity,
@@ -57,7 +57,7 @@ describe("asyncProcess", () => {
         });
 
         test("mode=1 process greenlights any action given empty validatorMap", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 async: true,
                 mode: 1,
@@ -87,7 +87,7 @@ describe("asyncProcess", () => {
             };
 
             test("binary process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 0,
                 };
@@ -98,7 +98,7 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: Infinity,
                 };
@@ -109,7 +109,7 @@ describe("asyncProcess", () => {
             });
 
             test("mode=1 process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 1,
                 };
@@ -135,7 +135,7 @@ describe("asyncProcess", () => {
             };
 
             test("binary process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 0,
                 };
@@ -146,7 +146,7 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: Infinity,
                 };
@@ -157,7 +157,7 @@ describe("asyncProcess", () => {
             });
 
             test("mode=1 process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 1,
                 };
@@ -184,7 +184,7 @@ describe("asyncProcess", () => {
             };
 
             test("binary process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 0,
                 };
@@ -196,7 +196,7 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: Infinity,
                 };
@@ -208,7 +208,7 @@ describe("asyncProcess", () => {
             });
 
             test("mode=1 process greenlights conforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 1,
                 };
@@ -251,7 +251,7 @@ describe("asyncProcess", () => {
             };
 
             test("binary process flags nonconforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 0,
                 };
@@ -262,7 +262,7 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process flags all the faults in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: Infinity,
                 };
@@ -276,7 +276,7 @@ describe("asyncProcess", () => {
             });
 
             test("mode=1 process flags at most one fault per field in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 1,
                 };
@@ -318,7 +318,7 @@ describe("asyncProcess", () => {
             };
 
             test("binary process flags nonconforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 0,
                 };
@@ -329,7 +329,7 @@ describe("asyncProcess", () => {
             });
 
             test("infinite process flags all the faults in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: Infinity,
                 };
@@ -342,7 +342,7 @@ describe("asyncProcess", () => {
             });
 
             test("mode=1 process flags at most one fault per field in a nonconforming action", async () => {
-                const processInput: types.ProcessInput<State, Login> = {
+                const processInput: types.AsyncProcessInput<State, Login> = {
                     ...baseProcessInput,
                     mode: 1,
                 };
@@ -389,7 +389,7 @@ describe("asyncProcess", () => {
         };
 
         test("binary process flags nonconforming action", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -400,7 +400,7 @@ describe("asyncProcess", () => {
         });
 
         test("infinite process flags all the faults in a nonconforming action", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -420,7 +420,7 @@ describe("asyncProcess", () => {
         });
 
         test("mode=1 process flags at most one fault per field in a nonconforming action", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 mode: 1,
             };
@@ -462,7 +462,7 @@ describe("asyncProcess", () => {
         }
 
         test("binary process fails when an external error occurs", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -473,7 +473,7 @@ describe("asyncProcess", () => {
         });
 
         test("infinite process gather fieldErrors and processErrors", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -485,12 +485,12 @@ describe("asyncProcess", () => {
                 processErrors: {
                     name: [getExternalError(), getExternalError()],
                     password: [getExternalError()],
-                }
+                },
             });
         });
 
         test("mode=1: processErrors count toward mode error count", async () => {
-            const processInput: types.ProcessInput<State, Login> = {
+            const processInput: types.AsyncProcessInput<State, Login> = {
                 ...baseProcessInput,
                 mode: 1,
             };

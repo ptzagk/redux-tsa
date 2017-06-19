@@ -12,23 +12,17 @@ export interface ValidatorInput<S, A extends Redux.Action, K extends keyof A> {
     state: S;
 }
 
-export type SyncCheck<
-    S,
-    A extends Redux.Action,
-    K extends keyof A
-> = (input: ValidatorInput<S, A, K>) => boolean;
+export type SyncCheck<S, A extends Redux.Action, K extends keyof A> = (
+    input: ValidatorInput<S, A, K>,
+) => boolean;
 
-export type AsyncCheck<
-    S,
-    A extends Redux.Action,
-    K extends keyof A
-> = (input: ValidatorInput<S, A, K>) => Promise<boolean>;
+export type AsyncCheck<S, A extends Redux.Action, K extends keyof A> = (
+    input: ValidatorInput<S, A, K>,
+) => Promise<boolean>;
 
-export type ProduceError<
-    S,
-    A extends Redux.Action,
-    K extends keyof A
-> = (input: ValidatorInput<S, A, K>) => TSAError;
+export type ProduceError<S, A extends Redux.Action, K extends keyof A> = (
+    input: ValidatorInput<S, A, K>,
+) => TSAError;
 
 export interface SyncValidator<S, A extends Redux.Action, K extends keyof A> {
     check: SyncCheck<S, A, K>;
@@ -50,29 +44,39 @@ export type ValidatorMap<S, A extends Redux.Action> = {
     [K in keyof A]?: Array<Validator<S, A, K>>;
 };
 
-export interface ErrorLike {
-    message: string;
+// export interface ErrorLike {
+//     message: string;
+//     [sym: string]: any;
+// }
+// ErrorWithExternalLabel |
+
+export interface ErrorWithLabel extends Error {
     [sym: string]: any;
 }
 
-export interface ErrorWithExternalLabel extends Error {
-    [sym: string]: any;
-}
+export type InternalTSAError = ErrorWithLabel | string;
 
-export type TSAError = ErrorWithExternalLabel | ErrorLike | string;
+export type TSAError =  Error | string;
 
 export type ErrorMap<A extends Redux.Action> = { [K in keyof A]?: TSAError[] };
 
 export interface Failure {
     fieldKey: string;
-    error: TSAError;
+    error: InternalTSAError;
 }
 
-export interface ProcessInput<S, A extends Redux.Action> {
+export interface BaseProcessInput<S, A extends Redux.Action> {
     action: A;
     state: S;
     mode: number;
+}
+
+export interface AsyncProcessInput<S, A extends Redux.Action> extends BaseProcessInput <S, A> {
     validatorMap: ValidatorMap<S, A>;
+}
+
+export interface SyncProcessInput<S, A extends Redux.Action> extends BaseProcessInput <S, A> {
+    validatorMap: SyncValidatorMap<S, A>;
 }
 
 export interface ErrorMaps<A extends Redux.Action> {

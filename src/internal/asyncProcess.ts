@@ -10,7 +10,7 @@ export default function asyncProcess<S, A extends types.Action>({
     action,
     validatorMap,
     mode,
-}: types.ProcessInput<S, A>): Promise<types.ProcessOutput<A>> {
+}: types.AsyncProcessInput<S, A>): Promise<types.ProcessOutput<A>> {
 
     function failure(result: types.ValidationResult): boolean {
         return result !== true;
@@ -24,7 +24,7 @@ export default function asyncProcess<S, A extends types.Action>({
             validatorInput: types.ValidatorInput<S, A, K>,
         ): Promise<types.ValidationResult> {
             return new Promise((resolve) => {
-                resolve(validator.check(validatorInput))
+                resolve(validator.check(validatorInput));
             })
             .catch((externalError) => {
                 return false;

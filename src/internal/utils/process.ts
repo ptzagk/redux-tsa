@@ -21,7 +21,7 @@ export function getValidatorInput<S, A extends types.Action, K extends keyof A>(
 
 interface UpdateErrorMapsInput<A extends types.Action> extends types.ErrorMaps<A> {
     fieldKey: string;
-    error: types.TSAError;
+    error: types.InternalTSAError;
 }
 
 export function buildErrorMaps<A extends types.Action>(failures: types.Failure[]): types.ErrorMaps<A> {
@@ -36,9 +36,9 @@ export function buildErrorMaps<A extends types.Action>(failures: types.Failure[]
     }: UpdateErrorMapsInput<A> ): void {
         if (typeof error !== "string" && error[processErrorSymbol]) {
             if (currentProcessErrors![fieldKey]) {
-                currentProcessErrors![fieldKey]!.push(error);
+                currentProcessErrors![fieldKey]!.push(error as types.TSAError);
             } else {
-                currentProcessErrors![fieldKey] = [ error ];
+                currentProcessErrors![fieldKey] = [ error as types.TSAError ];
             }
         } else {
             if (currentFieldErrors![fieldKey]) {

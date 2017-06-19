@@ -30,7 +30,7 @@ describe("syncProcess", () => {
         };
 
         test("binary process greenlights any action given empty validatorKeyMap", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -39,7 +39,7 @@ describe("syncProcess", () => {
         });
 
         test("infinite process greenlights any action given empty validatorKeyMap", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -48,7 +48,7 @@ describe("syncProcess", () => {
         });
 
         test("mode=1 process greenlights any action given empty validatorKeyMap", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };
@@ -72,7 +72,7 @@ describe("syncProcess", () => {
         };
 
         test("binary process greenlights conforming action", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -81,7 +81,7 @@ describe("syncProcess", () => {
         });
 
         test("infinite process greenlights conforming action", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -90,7 +90,7 @@ describe("syncProcess", () => {
         });
 
         test("mode=1 process greenlights conforming action", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };
@@ -114,7 +114,7 @@ describe("syncProcess", () => {
         };
 
         test("binary process flags nonconforming action", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -123,7 +123,7 @@ describe("syncProcess", () => {
         });
 
         test("infinite process flags all the faults in a nonconforming action", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -143,7 +143,7 @@ describe("syncProcess", () => {
         });
 
         test("mode=1 process flags at most one fault per field in a nonconforming action", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };
@@ -173,7 +173,7 @@ describe("syncProcess", () => {
         }
 
         test("binary process is lazy", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...getBaseProcessInput(),
                 mode: 0,
             };
@@ -188,7 +188,7 @@ describe("syncProcess", () => {
         });
 
         test("mode=1 process is lazy", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...getBaseProcessInput(),
                 mode: 1,
             };
@@ -203,7 +203,7 @@ describe("syncProcess", () => {
         });
 
         test("infinite process is eager", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...getBaseProcessInput(),
                 mode: Infinity,
             };
@@ -242,7 +242,7 @@ describe("syncProcess", () => {
         }
 
         test("binary process fails when an external error occurs", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 0,
             };
@@ -251,7 +251,7 @@ describe("syncProcess", () => {
         });
 
         test("infinite process gather fieldErrors and processErrors", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: Infinity,
             };
@@ -274,7 +274,7 @@ describe("syncProcess", () => {
         });
 
         test("mode=1: processErrors count toward mode error count", () => {
-            const processInput: types.ProcessInput<State, Donation> = {
+            const processInput: types.SyncProcessInput<State, Donation> = {
                 ...baseProcessInput,
                 mode: 1,
             };

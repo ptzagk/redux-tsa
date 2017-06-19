@@ -8,7 +8,7 @@ export default function syncProcess<S, A extends types.Action>({
     action,
     validatorMap,
     mode,
-}: types.ProcessInput<S, A>): types.ProcessOutput<A> {
+}: types.SyncProcessInput<S, A>): types.ProcessOutput<A> {
 
     function binaryProcess(): types.ProcessOutput<A> {
         for (const fieldKey of Object.keys(validatorMap)) {

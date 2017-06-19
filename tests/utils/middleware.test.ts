@@ -1,4 +1,4 @@
-import { isError, generateErrorAction } from "../../src/internal/utils/middleware";
+import { generateErrorAction, isError } from "../../src/internal/utils/middleware";
 
 import { donate, Donation } from "../example/actions";
 
@@ -19,7 +19,7 @@ describe("middleware utils", () => {
                     ],
                 },
                 processErrors: {},
-            }
+            };
 
             expect(isError(errorAction)).toBe(true);
         });
@@ -30,4 +30,4 @@ describe("middleware utils", () => {
             expect(isError(action)).toBe(false);
         });
     });
-})
+});

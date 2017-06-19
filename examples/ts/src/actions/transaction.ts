@@ -5,11 +5,13 @@ import { validate, ValidatorMap } from "redux-tsa";
 import { State } from "reducers";
 import { even, fundsAvailable, goodPerson, spaceAvailable } from "validators";
 
+type StreamType =
+"TRANSACTION_FORM_STREAM_NAME" |
+"TRANSACTION_FORM_STREAM_AMOUNT" |
+"TRANSACTION_FORM_STREAM_TRANSACTION_TYPE";
+
 export interface Stream extends Redux.Action {
-    type:
-        "TRANSACTION_FORM_STREAM_NAME" |
-        "TRANSACTION_FORM_STREAM_AMOUNT" |
-        "TRANSACTION_FORM_STREAM_TRANSACTION_TYPE";
+    type: StreamType;
     field: any;
 }
 
@@ -44,8 +46,8 @@ export interface Transaction extends Redux.Action {
 
 function withdrawal(target: string, amount: number): Transaction {
     const action: Transaction = {
-        target,
         amount,
+        target,
         type: "WITHDRAWAL",
     };
 

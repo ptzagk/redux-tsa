@@ -26,7 +26,7 @@ describe("process utils", () => {
 
     describe("buildErrorMaps", () => {
         test("builds ErrorMaps", () => {
-            const networkError: types.TSAError = Error("server did not respond");
+            const networkError: types.InternalTSAError = Error("server did not respond");
             networkError[processErrorSymbol] = true;
 
             const failures: types.Failure[] = [
