@@ -1,0 +1,16 @@
+@import "vendor/normalize";
+@import "vendor/skeleton";
+
+.app {
+    display: flex;
+
+    div {
+        width: 40%;
+        padding: 5%;
+        border-right: 0.5px solid #000;
+    }
+
+    .error {
+        color: #F44336;
+    }
+}

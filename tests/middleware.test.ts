@@ -65,6 +65,7 @@ describe("middleware", () => {
             expect(next).toHaveBeenCalledWith({
                 type: "DONATE",
                 error: true,
+                __reduxTSAError__: true,
                 fieldErrors: {
                     amount: [
                         "5037 is not a reasonable amount",
@@ -90,6 +91,7 @@ describe("middleware", () => {
 
             expect(next).toHaveBeenCalledWith({
                 type: "DONATE",
+                __reduxTSAError__: true,
                 error: true,
                 fieldErrors: null,
                 processErrors: null,
