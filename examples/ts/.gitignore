@@ -1,6 +1,3 @@
 node_modules/
-coverage/
-lib/
 .*
 !/.gitignore
-!/.travis.yml

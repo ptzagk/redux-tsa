@@ -4,7 +4,7 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "build": "webpack",
+    "build": "tsc",
     "lint": "tslint --fix --type-check -c tslint.json --project tsconfig.json",
     "test": "jest",
     "testcov": "jest --coverage",
@@ -40,7 +40,7 @@
     "transform": {
       "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "/__tests__/.*\\.(ts|tsx|js)$",
+    "testRegex": "/tests/.*\\.(ts|tsx|js)$",
     "moduleDirectories": [
       "node_modules",
       "<rootDir>/src"
