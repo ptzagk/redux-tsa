@@ -9,6 +9,7 @@ import * as types from "../types";
 
 export default <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) =>
     <A extends types.Action>(action: A) => {
+
         function handleOutput(result: types.ProcessOutput<A>): void {
             if (result === true) {
                 next(action);

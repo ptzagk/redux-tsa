@@ -1,10 +1,16 @@
-# Redux TSA 
+# Redux TSA
 
-[![Build](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master)](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master) [![codecov](https://codecov.io/gh/contrarian/redux-tsa/branch/master/graph/badge.svg)](https://codecov.io/gh/contrarian/redux-tsa)
+[![Build](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master)](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master) [![codecov](https://codecov.io/gh/contrarian/redux-tsa/branch/master/graph/badge.svg)](https://codecov.io/gh/contrarian/redux-tsa) [![codebeat badge](https://codebeat.co/badges/eb7c0635-61cb-4f68-a744-6fe62c54380e)](https://codebeat.co/projects/github-com-contrarian-redux-tsa-master)
 
 Async friendly validation middleware for Redux
 
 ```Note: Not ready for use!```
+
+# Overview
+
+1. Gist
+2. API
+3. Examples
 
 # Gist
 
@@ -47,7 +53,7 @@ function withdrawal(target: string, amount: number): Transaction {
         type: "WITHDRAWAL",
     };
 
-    // you can mix sync and validators, they will be normalized internally
+    // you can mix sync and async validators, they will be normalized internally
     const validatorMap: ValidatorMap<State, Transaction> = {
         target: [goodPerson],
         amount: [fundsAvailable, even],
@@ -57,7 +63,7 @@ function withdrawal(target: string, amount: number): Transaction {
 }
 ```
 
-### Redux TSA will perform the specifed validation:
+### Redux TSA will perform the specified validation:
   - If validation succeeds, the original action is passed to the next middleware
   - If validation fails, an error action is passed to the next middleware
 
@@ -73,7 +79,7 @@ case "WITHDRAWAL":
     }
 ```
 
-# API 
+# API
 
 ## Functions
 
@@ -100,13 +106,20 @@ applyMiddleware(reduxTSA)
 
 ```typescript
 
+/**
+ * mode specifies the max number of errors that should be captured per-field
+ * fieldErrors and processErrors both affect the error count
+ * mode defaults to Infinity, which captures as many errors as possible
+ * mode=0 specifies binary validation
+ * a lower mode means faster validation because the validators for a given field are raced
+ */
 interface ValidateInput<S, A extends Redux.Action> {
     action: A;
     validatorMap: ValidatorMap<S, A>;
     mode?: number;
 }
 
-validate<A extends Redux.Action>(input: ValidateInput) => A; 
+validate<A extends Redux.Action>(input: ValidateInput) => A;
 ```
 
 ### validateSync
@@ -115,13 +128,20 @@ validate<A extends Redux.Action>(input: ValidateInput) => A;
 
 ```typescript
 
+/**
+ * mode specifies the max number of errors that should be populated per-field
+ * fieldErrors and processErrors both affect the error count
+ * mode defaults to Infinity, which captures as many errors as possible
+ * mode=0 specifies binary validation
+ * a lower mode means faster validation becuase sync validation is performed lazily
+ */
 interface ValidateSyncInput<S, A extends types.Action> {
     action: A;
     validatorMap: types.SyncValidatorMap<S, A>;
     mode?: number;
 }
 
-validateSync<A extends Redux.Action>(input: ValidateSyncInput) => A; 
+validateSync<A extends Redux.Action>(input: ValidateSyncInput) => A;
 ```
 
 ### isError
@@ -132,14 +152,17 @@ validateSync<A extends Redux.Action>(input: ValidateSyncInput) => A;
 isError<A extends Redux.Action>(action: TSAAction<A>): action is ErrorAction<A>
 ```
 
-## Types/Interfaces 
+## Types/Interfaces
 
-* AsyncValidator 
+* AsyncValidator
 * SyncValidator
 * SyncValidatorMap
 * ValidatorMap
 * TSAAction
+* TSAError
 * ErrorMap
+
+```Only the above types/interfaces are exported. Other types/interfaces are also listed below for clarity.```
 
 ### AsyncValidator
 
@@ -152,8 +175,6 @@ interface ValidatorInput<S, A extends Redux.Action, K extends keyof A> {
     action: A;
     state: S;
 }
-
-type TSAError = Error | string;
 
 // ProduceError is used for both AsyncValidators and SyncValidators
 type ProduceError<S, A extends Redux.Action, K extends keyof A> = (
@@ -205,6 +226,11 @@ type ValidatorMap<S, A extends Redux.Action> = {
 ### TSAAction
 
 ```typescript
+
+/**
+ * fieldErrors are the error produced by your validators
+ * processErrors are the errors that occurred when trying to run your validators (e.g. failed network request)
+ */
 interface ErrorActionHelp<A extends Redux.Action, T extends keyof A> {
     type: A[T];
     error: boolean;
@@ -217,8 +243,19 @@ type ErrorAction<A extends Redux.Action> = ErrorActionHelp<A, "type">;
 type TSAAction<A extends Redux.Action> = A | ErrorAction<A>;
 ```
 
+### TSAError
+
+```typescript
+type TSAError = Error | string;
+```
+
 ### ErrorMap
 
 ```typescript
 type ErrorMap<A extends Redux.Action> = { [K in keyof A]?: TSAError[] };
 ```
+# Examples
+
+An example application using Redux TSA:
+- [TypeScript](https://github.com/contrarian/redux-tsa/tree/master/examples/ts)
+- [JavaScript](https://github.com/contrarian/redux-tsa/tree/master/examples/js)
