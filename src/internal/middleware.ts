@@ -3,22 +3,22 @@ import * as Redux from "redux";
 import asyncProcess from "./asyncProcess";
 import { asyncSymbol, modeSymbol, validatorMapSymbol } from "./symbols";
 import syncProcess from "./syncProcess";
-import { generateErrorAction } from "./utils/middleware";
+import { generateErrorAction } from "./utils/error";
 
 import * as types from "../types";
 
 export default <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) =>
     <A extends types.Action>(action: A) => {
 
-        function handleOutput(result: types.ProcessOutput<A>): void {
-            if (result === true) {
+        function handleOutput(output: types.ProcessOutput<A>): void {
+            if (output === true) {
                 next(action);
             } else {
                 let fieldErrors, processErrors, errorAction;
-                if (result === false) {
+                if (output === false) {
                     fieldErrors = processErrors = null;
                 } else {
-                    ({ fieldErrors, processErrors } = result);
+                    ({ fieldErrors, processErrors } = output);
                 }
                 errorAction = generateErrorAction({
                     action,

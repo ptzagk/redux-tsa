@@ -52,7 +52,7 @@ describe("middleware", () => {
             expect(next).toHaveBeenCalledWith(action);
         });
 
-        test("when an action fails sync validation, an error action is dispatched", () => {
+        test("when an action fails sync validation, an error action is passed to next", () => {
             const store = getStore();
             const next = jest.fn();
 

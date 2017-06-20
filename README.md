@@ -1,6 +1,6 @@
 # Redux TSA
 
-[![Build](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master)](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master) [![codecov](https://codecov.io/gh/contrarian/redux-tsa/branch/master/graph/badge.svg)](https://codecov.io/gh/contrarian/redux-tsa) [![codebeat badge](https://codebeat.co/badges/eb7c0635-61cb-4f68-a744-6fe62c54380e)](https://codebeat.co/projects/github-com-contrarian-redux-tsa-master)
+[![Build Status](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master)](https://travis-ci.org/contrarian/redux-tsa) [![codecov](https://codecov.io/gh/contrarian/redux-tsa/branch/master/graph/badge.svg)](https://codecov.io/gh/contrarian/redux-tsa) [![codebeat badge](https://codebeat.co/badges/eb7c0635-61cb-4f68-a744-6fe62c54380e)](https://codebeat.co/projects/github-com-contrarian-redux-tsa-master)
 
 Async friendly validation middleware for Redux
 

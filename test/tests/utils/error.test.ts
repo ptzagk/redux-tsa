@@ -1,8 +1,8 @@
-import { generateErrorAction, isError } from "../../../src/internal/utils/middleware";
+import { generateErrorAction, isError } from "../../../src/internal/utils/error";
 
 import { donate, Donation } from "../example/actions";
 
-describe("middleware utils", () => {
+describe("error utils", () => {
 
     describe("isError", () => {
         test("recognizes reduxTSAError action", () => {

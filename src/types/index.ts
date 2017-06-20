@@ -89,3 +89,15 @@ export type ProcessOutput<A extends Redux.Action> = ErrorMaps<A> | boolean;
 export type ValidationResult = Failure | boolean;
 
 export type FieldValidationResult = ValidationResult[];
+
+export interface ErrorActionHelp<A extends Redux.Action, T extends keyof A> {
+    __reduxTSAError__: boolean;
+    type: A[T];
+    error: boolean;
+    fieldErrors: ErrorMap<A> | null;
+    processErrors: ErrorMap<A> | null;
+}
+
+export type ErrorAction<A extends Redux.Action> = ErrorActionHelp<A, "type">;
+
+export type TSAAction<A extends Redux.Action> = A | ErrorAction<A>;
