@@ -1,15 +1,15 @@
 import "jest";
 import * as Redux from "redux";
 
-import reduxTSA from "../src/internal/middleware";
-import { validate, validateSync } from "../src/internal/utils/public";
+import reduxTSA from "../../src/internal/middleware";
+import { validate, validateSync } from "../../src/internal/utils/public";
 
 import { donate, Donation, login, Login } from "./example/actions";
 import { approved, poetic } from "./example/asyncValidators";
 import state, { State } from "./example/state";
 import { even, reasonable, sweet } from "./example/syncValidators";
 
-import * as types from "../src/types";
+import * as types from "../../src/types";
 
 describe("middleware", () => {
     function getStore(): Redux.MiddlewareAPI<State> {

@@ -1,7 +1,7 @@
 import "jest";
 
-import asyncProcess from "../src/internal/asyncProcess";
-import { processErrorSymbol } from "../src/internal/symbols";
+import asyncProcess from "../../src/internal/asyncProcess";
+import { processErrorSymbol } from "../../src/internal/symbols";
 
 import { login, Login } from "./example/actions";
 import { approved, poetic } from "./example/asyncValidators";
@@ -15,7 +15,7 @@ import {
     sweet,
 } from "./example/syncValidators";
 
-import * as types from "../src/types";
+import * as types from "../../src/types";
 
 describe("asyncProcess", () => {
 

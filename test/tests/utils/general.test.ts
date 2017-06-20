@@ -1,4 +1,4 @@
-import { flatten } from "../../src/internal/utils/general";
+import { flatten } from "../../../src/internal/utils/general";
 
 describe("general utils", () => {
 

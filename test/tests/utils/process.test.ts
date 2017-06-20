@@ -1,10 +1,10 @@
-import { processErrorSymbol } from "../../src/internal/symbols";
-import { buildErrorMaps, getValidatorInput } from "../../src/internal/utils/process";
+import { processErrorSymbol } from "../../../src/internal/symbols";
+import { buildErrorMaps, getValidatorInput } from "../../../src/internal/utils/process";
 
 import { donate, Donation } from "../example/actions";
 import state from "../example/state";
 
-import * as types from "../../src/types";
+import * as types from "../../../src/types";
 
 describe("process utils", () => {
 

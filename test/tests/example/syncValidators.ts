@@ -1,7 +1,7 @@
 import { Donation, Login } from "./actions";
 import { State } from "./state";
 
-import * as types from "../../src/types";
+import * as types from "../../../src/types";
 
 export const available: types.SyncValidator<State, Login, "name"> = {
     check({ field, state }) {

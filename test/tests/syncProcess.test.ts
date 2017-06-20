@@ -1,8 +1,8 @@
 import "jest";
 
-import { processErrorSymbol } from "../src/internal/symbols";
-import syncProcess from "../src/internal/syncProcess";
-import { getValidatorInput } from "../src/internal/utils/process";
+import { processErrorSymbol } from "../../src/internal/symbols";
+import syncProcess from "../../src/internal/syncProcess";
+import { getValidatorInput } from "../../src/internal/utils/process";
 
 import { donate, Donation } from "./example/actions";
 import state, { State } from "./example/state";
@@ -14,7 +14,7 @@ import {
     sweet,
 } from "./example/syncValidators";
 
-import * as types from "../src/types";
+import * as types from "../../src/types";
 
 describe("syncProcess", () => {
 

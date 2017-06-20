@@ -1,4 +1,4 @@
-import { generateErrorAction, isError } from "../../src/internal/utils/middleware";
+import { generateErrorAction, isError } from "../../../src/internal/utils/middleware";
 
 import { donate, Donation } from "../example/actions";
 

@@ -1,4 +1,4 @@
-import skurt from "../../src/internal/utils/skurt";
+import skurt from "../../../src/internal/utils/skurt";
 
 describe("skurt", () => {
 

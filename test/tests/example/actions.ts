@@ -2,7 +2,7 @@ import * as Redux from "redux";
 
 import { State } from "./state";
 
-import * as types from "../../src/types";
+import * as types from "../../../src/types";
 
 export interface Donation extends Redux.Action {
     name: string;

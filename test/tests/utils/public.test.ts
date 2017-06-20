@@ -1,5 +1,5 @@
-import { asyncSymbol, modeSymbol, validatorMapSymbol } from "../../src/internal/symbols";
-import { validate, validateSync } from "../../src/internal/utils/public";
+import { asyncSymbol, modeSymbol, validatorMapSymbol } from "../../../src/internal/symbols";
+import { validate, validateSync } from "../../../src/internal/utils/public";
 
 import { donate, Donation, login, Login } from "../example/actions";
 import { approved, poetic } from "../example/asyncValidators";
@@ -10,7 +10,7 @@ import {
     sweet,
 } from "../example/syncValidators";
 
-import * as types from "types";
+import * as types from "../../../src/types";
 
 describe("public utils", () => {
 
