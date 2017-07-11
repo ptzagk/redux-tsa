@@ -5,7 +5,7 @@ import skurt from "./utils/skurt";
 
 import * as types from "../types";
 
-export default function asyncProcess<S, A extends types.Action>({
+export default function asyncProcess<S, A extends types.AnyAction>({
     state,
     action,
     validatorMap,
@@ -18,7 +18,7 @@ export default function asyncProcess<S, A extends types.Action>({
 
     function binaryProcess(): Promise<types.ProcessOutput<A>> {
 
-        function getResult<S, A extends types.Action, K extends keyof A>(
+        function getResult<S, A extends types.AnyAction, K extends keyof A>(
             validator: types.Validator<S, A, K>,
             fieldKey: K,
             validatorInput: types.ValidatorInput<S, A, K>,
@@ -44,7 +44,7 @@ export default function asyncProcess<S, A extends types.Action>({
 
     function normalProcess(): Promise<types.ProcessOutput<A>> {
 
-        function getResult<S, A extends types.Action, K extends keyof A>(
+        function getResult<S, A extends types.AnyAction, K extends keyof A>(
             { check, error }: types.Validator<S, A, K>,
             fieldKey: K,
             validatorInput: types.ValidatorInput<S, A, K>,

@@ -1,8 +1,7 @@
 import * as Redux from "redux";
 
-export interface Action {
-    type: any;
-    [fieldKey: string]: any;
+export interface AnyAction extends Redux.Action {
+    [extraProps: string ]: any;
 }
 
 export interface ValidatorInput<S, A extends Redux.Action, K extends keyof A> {
@@ -43,12 +42,6 @@ export type SyncValidatorMap<S, A extends Redux.Action> = {
 export type ValidatorMap<S, A extends Redux.Action> = {
     [K in keyof A]?: Array<Validator<S, A, K>>;
 };
-
-// export interface ErrorLike {
-//     message: string;
-//     [sym: string]: any;
-// }
-// ErrorWithExternalLabel |
 
 export interface ErrorWithLabel extends Error {
     [sym: string]: any;

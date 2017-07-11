@@ -22,18 +22,21 @@ describe("public utils", () => {
             password: [approved],
         };
 
-        const validatedAction: types.Action = validate({ action, validatorMap });
+        const validatedAction = validate({ action, validatorMap });
 
         test("async is set to true", () => {
+            const validatedAction: types.AnyAction = validate({ action, validatorMap });
             expect(validatedAction[asyncSymbol]).toBe(true);
         });
 
         test("mode defaults to Infinity", () => {
+            const validatedAction: types.AnyAction = validate({ action, validatorMap });
             expect(validatedAction[modeSymbol]).toBe(Infinity);
         });
 
         test("augments given action with validation input", () => {
-            expect(validate({ action, validatorMap, mode: 0 })).toEqual({
+            const validatedAction: types.AnyAction = validate({ action, validatorMap, mode: 0 });
+            expect(validatedAction).toEqual({
                 ...action,
                 [validatorMapSymbol]: validatorMap,
                 [modeSymbol]: 0,
@@ -50,18 +53,19 @@ describe("public utils", () => {
             amount: [reasonable, even],
         };
 
-        const validatedAction: types.Action = validateSync({ action, validatorMap });
-
         test("async is set to false", () => {
+            const validatedAction: types.AnyAction = validateSync({ action, validatorMap });
             expect(validatedAction[asyncSymbol]).toBe(false);
         });
 
         test("mode defaults to Infinity", () => {
+            const validatedAction: types.AnyAction = validateSync({ action, validatorMap });
             expect(validatedAction[modeSymbol]).toBe(Infinity);
         });
 
         test("augments given action with validation input", () => {
-            expect(validateSync({ action, validatorMap, mode: 0 })).toEqual({
+            const validatedAction: types.AnyAction = validateSync({ action, validatorMap, mode: 0 });
+            expect(validatedAction).toEqual({
                 ...action,
                 [validatorMapSymbol]: validatorMap,
                 [modeSymbol]: 0,

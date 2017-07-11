@@ -1,5 +1,5 @@
 import * as Redux from "redux";
-import { isError, TSAAction } from "redux-tsa";
+import { isTSAErrorAction, TSAAction } from "redux-tsa";
 
 import { Transaction } from "actions/transaction";
 
@@ -36,7 +36,7 @@ export type Action = TSAAction<Transaction>;
 export default function accounts(state: Accounts = initialState, action: Action): Accounts {
     switch (action.type) {
         case "DEPOSIT":
-            if (isError(action)) {
+            if (isTSAErrorAction(action)) {
                 return state;
             } else {
                 return {
@@ -48,7 +48,7 @@ export default function accounts(state: Accounts = initialState, action: Action)
                 };
             }
         case "WITHDRAWAL":
-            if (isError(action)) {
+            if (isTSAErrorAction(action)) {
                 return state;
             } else {
                 return {

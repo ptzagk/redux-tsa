@@ -1,12 +1,10 @@
 {
-  "name": "redux-tsa-ts-example",
+  "name": "redux-tsa-js-example",
   "version": "1.0.0",
-  "description": "example application using redux-tsa for validation",
+  "description": "example application using redux-tsa",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "lint": "tslint --fix --type-check -c tslint.json --project tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mateusz Okon <teuszokon@gmail.com> (http://mateuszokon.com/)",
   "license": "MIT",

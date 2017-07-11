@@ -57,7 +57,7 @@ export const matchesPassword: types.SyncValidator<State, Login, "confirm"> = {
     },
 };
 
-export const confusedError: types.SyncValidator<State, types.Action, string> = {
+export const confusedError: types.SyncValidator<State, types.AnyAction, string> = {
     check() {
         return false;
     },
@@ -66,7 +66,7 @@ export const confusedError: types.SyncValidator<State, types.Action, string> = {
     },
 };
 
-export const confusedCheck: types.SyncValidator<State, types.Action, string> = {
+export const confusedCheck: types.SyncValidator<State, types.AnyAction, string> = {
       check() {
           return `${Symbol("there")}`.length > 10;
       },

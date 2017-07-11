@@ -8,11 +8,11 @@ import { generateErrorAction } from "./utils/error";
 import * as types from "../types";
 
 export default <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) =>
-    <A extends types.Action>(action: A) => {
+    <A extends types.AnyAction>(action: A) => {
 
-        function handleOutput(output: types.ProcessOutput<A>): void {
+        function handleOutput(output: types.ProcessOutput<A>) {
             if (output === true) {
-                next(action);
+                return next(action);
             } else {
                 let fieldErrors, processErrors, errorAction;
                 if (output === false) {
@@ -26,7 +26,7 @@ export default <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) =
                     processErrors,
                     error: true,
                 });
-                next(errorAction);
+                return next(errorAction);
             }
         }
 
@@ -41,9 +41,9 @@ export default <S>(store: Redux.MiddlewareAPI<S>) => (next: Redux.Dispatch<S>) =
             if (action[asyncSymbol]) {
                 return asyncProcess(processInput).then(handleOutput);
             } else {
-                handleOutput(syncProcess(processInput));
+                return handleOutput(syncProcess(processInput));
             }
         } else {
-            next(action);
+            return next(action);
         }
 };

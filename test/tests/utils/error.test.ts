@@ -1,10 +1,10 @@
-import { generateErrorAction, isError } from "../../../src/internal/utils/error";
+import { isTSAErrorAction } from "../../../src/internal/utils/error";
 
-import { donate, Donation } from "../example/actions";
+import { donate } from "../example/actions";
 
 describe("error utils", () => {
 
-    describe("isError", () => {
+    describe("isTSAErrorAction", () => {
         test("recognizes reduxTSAError action", () => {
             const errorAction = {
                 type: "DONATE",
@@ -22,7 +22,7 @@ describe("error utils", () => {
                 processErrors: {},
             };
 
-            expect(isError(errorAction)).toBe(true);
+            expect(isTSAErrorAction(errorAction)).toBe(true);
         });
 
         test("recognizes user error action", () => {
@@ -42,13 +42,13 @@ describe("error utils", () => {
                 processErrors: {},
             };
 
-            expect(isError(errorAction)).toBe(false);
+            expect(isTSAErrorAction(errorAction)).toBe(false);
         });
 
         test("recognizes normal action", () => {
             const action = donate("sugarTrain10", 650);
 
-            expect(isError(action)).toBe(false);
+            expect(isTSAErrorAction(action)).toBe(false);
         })
     });
 });

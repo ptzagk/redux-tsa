@@ -10,7 +10,7 @@ describe("process utils", () => {
 
     describe("getValidatorInput", () => {
         test("produces validatorInput", () => {
-            const action: types.Action  = {
+            const action: types.AnyAction  = {
                 type: "ADD_NOTE",
                 note: "less is more if more is too much",
             };

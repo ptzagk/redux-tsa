@@ -1,5 +1,5 @@
 import * as Redux from "redux";
-import { isError, TSAAction } from "redux-tsa";
+import { isTSAErrorAction, TSAAction } from "redux-tsa";
 
 import { Stream, Transaction, TransactionType } from "actions/transaction";
 
@@ -29,7 +29,7 @@ export default function transactionForm(state = initialState, action: Action): T
             return { ...state, amount: Number(action.field) };
         case "DEPOSIT":
         case "WITHDRAWAL":
-            if (isError(action)) {
+            if (isTSAErrorAction(action)) {
                 return { ...state, errors: action.fieldErrors! };
             } else {
                 return initialState;

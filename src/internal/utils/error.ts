@@ -2,7 +2,9 @@ import * as Redux from "redux";
 
 import * as types from "../../types";
 
-export function isError<A extends Redux.Action>(action: types.TSAAction<A>): action is types.ErrorAction<A> {
+export function isTSAErrorAction<A extends Redux.Action>(
+    action: types.TSAAction<A>,
+): action is types.ErrorAction<A> {
     return (action as types.ErrorAction<A>).__reduxTSAError__ !== undefined;
 }
 

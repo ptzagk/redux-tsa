@@ -3,7 +3,7 @@ import { buildErrorMaps, getValidatorInput } from "./utils/process";
 
 import * as types from "../types";
 
-export default function syncProcess<S, A extends types.Action>({
+export default function syncProcess<S, A extends types.AnyAction>({
     state,
     action,
     validatorMap,
@@ -27,7 +27,7 @@ export default function syncProcess<S, A extends types.Action>({
     }
 
     function normalProcess(): types.ProcessOutput<A> {
-            function getResult<S, A extends types.Action, K extends keyof A>(
+            function getResult<S, A extends types.AnyAction, K extends keyof A>(
                 { check, error }: types.Validator<S, A, K>,
                 fieldKey: K,
                 validatorInput: types.ValidatorInput<S, A, K>,

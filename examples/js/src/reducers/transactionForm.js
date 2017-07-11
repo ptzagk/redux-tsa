@@ -1,5 +1,5 @@
 import * as Redux from "redux";
-import { isError } from "redux-tsa";
+import { isTSAErrorAction } from "redux-tsa";
 
 const initialState = {
     target: "mango",
@@ -18,7 +18,7 @@ export default function transactionForm(state = initialState, action) {
             return { ...state, amount: Number(action.field) };
         case "DEPOSIT":
         case "WITHDRAWAL":
-            if (isError(action)) {
+            if (isTSAErrorAction(action)) {
                 return { ...state, errors: action.fieldErrors };
             } else {
                 return initialState;

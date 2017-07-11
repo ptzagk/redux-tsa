@@ -1,5 +1,5 @@
 import * as Redux from "redux";
-import { isError } from "redux-tsa";
+import { isTSAErrorAction } from "redux-tsa";
 
 const initialState = {
     apple: {
@@ -23,7 +23,7 @@ const initialState = {
 export default function accounts(state = initialState, action) {
     switch (action.type) {
         case "DEPOSIT":
-            if (isError(action)) {
+            if (isTSAErrorAction(action)) {
                 return state;
             } else {
                 return {
@@ -35,7 +35,7 @@ export default function accounts(state = initialState, action) {
                 };
             }
         case "WITHDRAWAL":
-            if (isError(action)) {
+            if (isTSAErrorAction(action)) {
                 return state;
             } else {
                 return {
