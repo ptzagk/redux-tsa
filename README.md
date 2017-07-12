@@ -1,16 +1,16 @@
 # Redux TSA
 
-[![Build Status](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master)](https://travis-ci.org/contrarian/redux-tsa) [![codecov](https://codecov.io/gh/contrarian/redux-tsa/branch/master/graph/badge.svg)](https://codecov.io/gh/contrarian/redux-tsa) [![codebeat badge](https://codebeat.co/badges/eb7c0635-61cb-4f68-a744-6fe62c54380e)](https://codebeat.co/projects/github-com-contrarian-redux-tsa-master)
+[![Build Status](https://travis-ci.org/contrarian/redux-tsa.svg?branch=master)](https://travis-ci.org/contrarian/redux-tsa) [![codecov](https://codecov.io/gh/contrarian/redux-tsa/branch/master/graph/badge.svg)](https://codecov.io/gh/contrarian/redux-tsa) [![codebeat badge](https://codebeat.co/badges/eb7c0635-61cb-4f68-a744-6fe62c54380e)](https://codebeat.co/projects/github-com-contrarian-redux-tsa-master) [![npm version](https://badge.fury.io/js/redux-tsa.svg)](https://badge.fury.io/js/redux-tsa)
 
 Async friendly validation middleware for Redux
-
-```Note: Not ready for use!```
 
 # Overview
 
 1. Gist
 2. API
-3. Examples
+3. Performance
+4. Complementary Libraries
+5. Examples
 
 # Gist
 
@@ -67,12 +67,12 @@ function withdrawal(target: string, amount: number): Transaction {
   - If validation succeeds, the original action is passed to the next middleware
   - If validation fails, an error action is passed to the next middleware
 
-### You use the ```isError``` type guard to check for failure:
+### You use the ```isTSAErrorAction``` type guard to check for failure:
 
 ```typescript
 // inside a reducer
 case "WITHDRAWAL":
-    if (isError(action)) {
+    if (isTSAErrorAction(action)) {
         return { ...state, errors: action.fieldErrors! };
     } else {                
         return initialState;
@@ -86,7 +86,7 @@ case "WITHDRAWAL":
 * reduxTSA
 * validate
 * validateSync
-* isError
+* isTSAErrorAction
 
 ### reduxTSA
 
@@ -107,7 +107,7 @@ applyMiddleware(reduxTSA)
 ```typescript
 
 /**
- * mode specifies the max number of errors that should be captured per-field
+ * mode specifies the max number of errors that should be captured per field
  * fieldErrors and processErrors both affect the error count
  * mode defaults to Infinity, which captures as many errors as possible
  * mode=0 specifies binary validation
@@ -129,7 +129,7 @@ validate<A extends Redux.Action>(input: ValidateInput) => A;
 ```typescript
 
 /**
- * mode specifies the max number of errors that should be populated per-field
+ * mode specifies the max number of errors that should be populated per field
  * fieldErrors and processErrors both affect the error count
  * mode defaults to Infinity, which captures as many errors as possible
  * mode=0 specifies binary validation
@@ -144,12 +144,12 @@ interface ValidateSyncInput<S, A extends types.Action> {
 validateSync<A extends Redux.Action>(input: ValidateSyncInput) => A;
 ```
 
-### isError
+### isTSAErrorAction
 
-```isError``` is a type guard that is used to determine whether an action passed validation:
+```isTSAErrorAction``` is a type guard that is used to determine whether an action passed validation:
 
 ```typescript
-isError<A extends Redux.Action>(action: TSAAction<A>): action is ErrorAction<A>
+isError<A extends Redux.Action>(action: TSAAction<A>): action is TSAErrorAction<A>
 ```
 
 ## Types/Interfaces
@@ -157,6 +157,7 @@ isError<A extends Redux.Action>(action: TSAAction<A>): action is ErrorAction<A>
 * AsyncValidator
 * SyncValidator
 * SyncValidatorMap
+* Validator
 * ValidatorMap
 * TSAAction
 * TSAError
@@ -212,6 +213,14 @@ type SyncValidatorMap<S, A extends Redux.Action> = {
 };
 ```
 
+### Validator
+
+```typescript
+
+type Validator<S, A extends Redux.Action, K extends keyof A> = 
+    SyncValidator<S, A, K> | AsyncValidator<S, A, K>;
+```
+
 ### ValidatorMap
 
 ```typescript
@@ -228,8 +237,9 @@ type ValidatorMap<S, A extends Redux.Action> = {
 ```typescript
 
 /**
- * fieldErrors are the error produced by your validators
- * processErrors are the errors that occurred when trying to run your validators (e.g. failed network request)
+ * fieldErrors are the errors produced by your validators
+ * processErrors are the errors that occur when trying to run your validators (e.g. failed network request)
+ * fieldErrors and processErrors will be null only if mode=0
  */
 interface ErrorActionHelp<A extends Redux.Action, T extends keyof A> {
     type: A[T];
@@ -254,6 +264,25 @@ type TSAError = Error | string;
 ```typescript
 type ErrorMap<A extends Redux.Action> = { [K in keyof A]?: TSAError[] };
 ```
+# Performance
+
+Redux TSA makes validation fast using the concept of a ```mode```. ```mode``` is specified when calling either ```validate``` or ```validateSync```, and specifies how many errors to capture per field. The lower the ```mode```, the faster validation will be.
+
+## Async Performance
+
+When performing async validation:
+* Redux TSA *races* the validators for each field. Redux TSA is done validating a field as soon as ```mode``` number of errors are found.
+* Redux TSA runs the validators for each field *concurrently*.
+
+## Sync Performance
+
+When performing sync validation:
+* Redux TSA runs the validators *lazily*. If  ```mode``` number of errors were already found for a field, then Redux TSA will not run any more validators for that field.
+
+# Complementary Libraries
+
+1. [Redux Transform](https://github.com/contrarian/redux-transform): lets you transform the properties of an action in much the same way that Redux TSA lets validate the properties of an action. 
+
 # Examples
 
 An example application using Redux TSA:
