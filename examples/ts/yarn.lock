@@ -3290,9 +3290,9 @@ reduce-function-call@^1.0.1:
   dependencies:
     balanced-match "^0.4.2"
 
-redux-tsa@^1.0.0-rc.2:
-  version "1.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/redux-tsa/-/redux-tsa-1.0.0-rc.2.tgz#7d074157d5cc78baa5e39a1129c1ea2fcaa58ffe"
+redux-tsa@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/redux-tsa/-/redux-tsa-1.0.0.tgz#a2e3043020dadda901e18585b5d708176221fe78"
 
 redux@^3.6.0, redux@^3.7.1:
   version "3.7.1"
